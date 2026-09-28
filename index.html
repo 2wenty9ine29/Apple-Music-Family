@@ -8,13 +8,27 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <section class="splash" id="splash">
+    <div class="splash-orb orb-one"></div><div class="splash-orb orb-two"></div>
+    <div class="splash-ribbons" aria-hidden="true">
+      <span class="ribbon ribbon-a"></span>
+      <span class="ribbon ribbon-b"></span>
+      <span class="ribbon ribbon-c"></span>
+    </div>
+    <div class="sound-wave" aria-hidden="true">
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
+    <div class="splash-glass"><div class="music-glyph">♪</div></div>
+    <div class="splash-copy"><div class="splash-kicker">APPLE MUSIC FAMILY</div><h1>Music<span> Money</span></h1><p>Your family subscriptions.<br>Simple. Clear. Together.</p></div>
+    <button class="enter-button" id="enterApp">Continue <span>→</span></button>
+  </section>
   <div class="app-shell">
     <header class="topbar">
       <div>
         <div class="eyebrow">FAMILY MUSIC</div>
         <h1>Money</h1>
       </div>
-      <button class="icon-button" id="addPaymentTop" aria-label="Add payment">＋</button>
+      <button class="brand-chip" id="homeBrand" aria-label="Music Money home">M</button>
     </header>
 
     <main>
@@ -63,6 +77,7 @@
           <h2>People</h2>
           <button class="text-button" id="addMember">Add</button>
         </div>
+        <div class="marker-legend"><span>🪽 Aug</span><span>🦉 Oct</span><span>🛩️ Apr</span><span>🛁 Jan</span><span>🐍 Sep</span><span>🎰 Jul</span></div>
         <label class="search">
           <span>⌕</span>
           <input id="searchInput" type="search" placeholder="Search members" autocomplete="off" />
@@ -82,7 +97,7 @@
     <nav class="tabbar">
       <button class="tab active" data-tab="overview">Overview</button>
       <button class="tab" data-tab="people">People</button>
-      <button class="tab primary" id="addPaymentBottom">＋</button>
+      <button class="tab brand-tab" id="homeTab">M</button>
       <button class="tab" data-tab="payments">Payments</button>
       <button class="tab" id="settingsTab">Settings</button>
     </nav>
@@ -137,6 +152,9 @@
       </label>
       <label>Monthly price
         <input id="memberPrice" type="number" min="0" step="0.01" inputmode="decimal" required />
+      </label>
+      <label>Payment marker
+        <select id="memberMarker"><option value="">No marker</option><option value="🪽">🪽 — August</option><option value="🦉">🦉 — October</option><option value="🛩️">🛩️ — April</option><option value="🛁">🛁 — January</option><option value="🐍">🐍 — September</option><option value="🎰">🎰 — July</option></select>
       </label>
       <button class="save-button" type="submit">Save member</button>
     </form>

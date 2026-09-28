@@ -7,16 +7,22 @@ const monthNames = [
 
 const defaultData = {
   accounts: [
-    { id: "account-1", name: "Account 1", monthlyDefault: 20 },
-    { id: "account-2", name: "Account 2", monthlyDefault: 20 }
+    { id: "account-1", name: "Account 1", monthlyDefault: 15 },
+    { id: "account-2", name: "Account 2", monthlyDefault: 15 }
   ],
   members: [
-    { id: "m1", name: "Ama", accountId: "account-1", monthlyPrice: 20 },
-    { id: "m2", name: "Kofi", accountId: "account-1", monthlyPrice: 20 },
-    { id: "m3", name: "Daniel", accountId: "account-1", monthlyPrice: 20 },
-    { id: "m4", name: "Joseph", accountId: "account-2", monthlyPrice: 20 },
-    { id: "m5", name: "Ben", accountId: "account-2", monthlyPrice: 20 },
-    { id: "m6", name: "Quolegeo", accountId: "account-2", monthlyPrice: 20 }
+    { id: "m1", name: "AARON", accountId: "account-1", monthlyPrice: 15, marker: "🛩️", markerMonth: "April" },
+    { id: "m2", name: "Dorcas-10th", accountId: "account-1", monthlyPrice: 15, marker: "🪽", markerMonth: "August" },
+    { id: "m3", name: "Ama’s sister", accountId: "account-1", monthlyPrice: 15, marker: "🐍", markerMonth: "September" },
+    { id: "m4", name: "Asare", accountId: "account-1", monthlyPrice: 15, marker: "🦉", markerMonth: "October" },
+    { id: "m5", name: "BROBBEY", accountId: "account-1", monthlyPrice: 15, marker: "🪽", markerMonth: "August" },
+    { id: "m6", name: "HEINRICH", accountId: "account-1", monthlyPrice: 15, marker: "🪽", markerMonth: "August" },
+    { id: "m7", name: "MINE", accountId: "account-2", monthlyPrice: 15, marker: "🦉", markerMonth: "October" },
+    { id: "m8", name: "BEN", accountId: "account-2", monthlyPrice: 15, marker: "🦉", markerMonth: "October" },
+    { id: "m9", name: "Ama", accountId: "account-2", monthlyPrice: 15, marker: "🐍", markerMonth: "September" },
+    { id: "m10", name: "QUOLEGEO", accountId: "account-2", monthlyPrice: 15, marker: "🪽", markerMonth: "August" },
+    { id: "m11", name: "JOSEPH", accountId: "account-2", monthlyPrice: 15, marker: "🦉", markerMonth: "October" },
+    { id: "m12", name: "Justice- Joseph Gee-", accountId: "account-2", monthlyPrice: 15, marker: "🦉", markerMonth: "October" }
   ],
   payments: []
 };
@@ -43,6 +49,11 @@ function saveData() {
 }
 function member(id) { return data.members.find(m => m.id === id); }
 function account(id) { return data.accounts.find(a => a.id === id); }
+
+const markerLegend = {
+  "🪽": "August", "🦉": "October", "🛩️": "April", "🛁": "January", "🐍": "September", "🎰": "July"
+};
+function markerFor(m) { return m.marker || ""; }
 
 function paymentsForMemberBefore(m, targetMonth) {
   return data.payments
@@ -180,13 +191,10 @@ function renderPeople(mk, accountFilter = null) {
     return `
       <button class="person-row" data-member="${m.id}">
         <div class="person-main">
-          <h3 class="person-name">${escapeHtml(m.name)}</h3>
-          <div class="sub">${escapeHtml(a?.name || "No account")} · ${money(m.monthlyPrice)}/month</div>
+          <div class="name-line"><span class="member-marker">${markerFor(m)}</span><h3 class="person-name">${escapeHtml(m.name)}</h3></div>
+          <div class="sub">${escapeHtml(a?.name || "No account")} · ${money(m.monthlyPrice)}/month · ${escapeHtml(m.markerMonth || markerLegend[m.marker] || "")}</div>
         </div>
-        <div class="status ${s.key}">
-          <strong>${s.label}</strong>
-          <small>${s.detail}</small>
-        </div>
+        <div class="status ${s.key}"><strong>${s.label}</strong><small>${s.detail}</small></div>
       </button>`;
   }).join("");
 
@@ -254,8 +262,10 @@ function openMemberSheet(memberId = null) {
     $("memberName").value = m.name;
     $("memberAccount").value = m.accountId;
     $("memberPrice").value = m.monthlyPrice;
+    $("memberMarker").value = m.marker || "";
   } else {
-    $("memberPrice").value = account(data.accounts[0]?.id)?.monthlyDefault || 20;
+    $("memberPrice").value = account(data.accounts[0]?.id)?.monthlyDefault || 15;
+    $("memberMarker").value = "";
   }
   populateMemberSelects();
   openSheet("memberSheet");
@@ -277,7 +287,18 @@ function renderAccountEditor() {
   $("accountEditor").querySelectorAll("[data-account-name]").forEach(input => {
     input.addEventListener("change", () => {
       const a = account(input.dataset.accountName);
-      if (a) { a.name = input.value.trim() || a.name; saveData(); render(); }
+      if (a) { a.name = input.value.trim() || a.name; saveData(); (function migrateSampleData() {
+  const saved = localStorage.getItem(KEY);
+  if (!saved) return;
+  try {
+    const parsed = JSON.parse(saved);
+    const oldNames = ["Kofi","Daniel","Quolegeo","Joseph"];
+    if (parsed.members?.some(m => oldNames.includes(m.name))) {
+      localStorage.removeItem(KEY); data = structuredClone(defaultData); saveData();
+    }
+  } catch {}
+})();
+render(); }
     });
   });
   $("accountEditor").querySelectorAll("[data-delete-account]").forEach(btn => {
@@ -351,7 +372,9 @@ $("memberForm").addEventListener("submit", e => {
   const payload = {
     name: $("memberName").value.trim(),
     accountId: $("memberAccount").value,
-    monthlyPrice: Number($("memberPrice").value)
+    monthlyPrice: Number($("memberPrice").value),
+    marker: $("memberMarker").value,
+    markerMonth: markerLegend[$("memberMarker").value] || ""
   };
   if (!payload.name || payload.monthlyPrice < 0) return;
   if (editing) {
@@ -366,7 +389,7 @@ $("memberForm").addEventListener("submit", e => {
 });
 
 $("addAccountButton").addEventListener("click", () => {
-  data.accounts.push({id:uid("account"), name:`Account ${data.accounts.length+1}`, monthlyDefault:20});
+  data.accounts.push({id:uid("account"), name:`Account ${data.accounts.length+1}`, monthlyDefault:15});
   saveData(); renderAccountEditor(); render(); toast("Account added");
 });
 
@@ -392,8 +415,9 @@ $("monthTitle").addEventListener("click", () => {
   toast("Returned to current month");
 });
 
-$("addPaymentTop").onclick = () => openPaymentSheet();
-$("addPaymentBottom").onclick = () => openPaymentSheet();
+$("enterApp").onclick = () => { document.body.classList.add("app-ready"); $("splash").classList.add("hide"); setTimeout(() => $("splash")?.remove(), 650); };
+$("homeBrand").onclick = () => window.scrollTo({top:0, behavior:"smooth"});
+$("homeTab").onclick = () => window.scrollTo({top:0, behavior:"smooth"});
 $("addMember").onclick = () => openMemberSheet();
 $("manageAccounts").onclick = () => openAccountsSheet();
 $("settingsTab").onclick = () => openAccountsSheet();

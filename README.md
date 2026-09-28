@@ -1,4 +1,4 @@
-# Music Money v1.0
+# Music Money v1.1
 
 A lightweight Apple-inspired family subscription payment tracker.
 
@@ -40,3 +40,12 @@ GitHub will give you a public Pages URL.
 This first version stores data locally in the browser. If you open the app on another phone/browser, it will have its own data.
 
 A future version can add cloud sync/login, CSV export, receipts, reminders, payment filters and a proper reports dashboard.
+
+
+## v1.1
+- GH₵15/month
+- 12 preloaded members across 2 accounts
+- Payment markers mapped to their reference months
+- Premium black/white/Volt/red/blue visual system
+- Apple Music-inspired opening screen with glass effect
+- Main plus button removed
