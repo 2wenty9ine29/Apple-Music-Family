@@ -1,3 +1,24 @@
+const views=["home","people","reminders","payments"];
+function applyView(v){
+  if(!views.includes(v))v="home";
+  document.body.dataset.view=v;
+  document.body.classList.remove("splash-open");
+  document.querySelectorAll(".tab[data-tab]").forEach(t=>t.classList.toggle("active",(t.dataset.tab==="overview"?"home":t.dataset.tab)===v));
+  document.querySelectorAll(".top-links [data-tab]").forEach(t=>t.classList.toggle("active",t.dataset.tab===v));
+  window.scrollTo(0,0);
+}
+function goView(v){if(location.hash==="#"+v)applyView(v);else location.hash=v}
+window.addEventListener("hashchange",()=>applyView(location.hash.slice(1)));
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-landing-target],.tab[data-tab],.top-links [data-tab],#homeBrand,#appHome,#enterApp,#landingReminder");
+  if(!t)return;
+  if(t.dataset.landingTarget)return goView(t.dataset.landingTarget);
+  if(t.dataset.tab)return goView(t.dataset.tab==="overview"?"home":t.dataset.tab);
+  if(t.id==="homeBrand"||t.id==="appHome")return goView("home");
+  if(t.id==="enterApp")return goView("people");
+  if(t.id==="landingReminder")return goView("reminders");
+});
+applyView(location.hash.slice(1));
 const KEY = "music-money-v1";
 const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const markerByMonth = {January:"🛁",February:"",March:"",April:"🛩️",May:"",June:"",July:"🎰",August:"🪽",September:"🐍",October:"🦉",November:"",December:""};
@@ -5,17 +26,17 @@ const defaultData = {
   accounts:[{id:"account-1",name:"Account 1",monthlyDefault:15},{id:"account-2",name:"Account 2",monthlyDefault:15}],
   members:[
     {id:"m1",name:"AARON",accountId:"account-1",monthlyPrice:15,marker:"🛩️",markerMonth:"April",markerYear:2026,monthsPaid:1,reminderTone:"male",paysFor:[]},
-    {id:"m2",name:"Dorcas-10th",accountId:"account-1",monthlyPrice:15,marker:"🪽",markerMonth:"August",markerYear:2026,monthsPaid:1,reminderTone:"female",paysFor:[]},
-    {id:"m3",name:"Ama’s sister",accountId:"account-1",monthlyPrice:15,marker:"🐍",markerMonth:"September",markerYear:2026,monthsPaid:1,reminderTone:"female",paidBy:"m9",paysFor:[]},
-    {id:"m4",name:"Asare",accountId:"account-1",monthlyPrice:15,marker:"🦉",markerMonth:"October",markerYear:2026,monthsPaid:1,reminderTone:"male",paysFor:[]},
+    {id:"m2",name:"DORCAS",accountId:"account-1",monthlyPrice:15,marker:"🪽",markerMonth:"August",markerYear:2026,monthsPaid:1,reminderTone:"female",paysFor:[]},
+    {id:"m3",name:"AMA’S SISTER",accountId:"account-1",monthlyPrice:15,marker:"🐍",markerMonth:"September",markerYear:2026,monthsPaid:1,reminderTone:"female",paidBy:"m9",paysFor:[]},
+    {id:"m4",name:"ASARE",accountId:"account-1",monthlyPrice:15,marker:"🦉",markerMonth:"October",markerYear:2026,monthsPaid:1,reminderTone:"male",paysFor:[]},
     {id:"m5",name:"BROBBEY",accountId:"account-1",monthlyPrice:15,marker:"🪽",markerMonth:"August",markerYear:2026,monthsPaid:1,reminderTone:"male",paysFor:[]},
     {id:"m6",name:"HEINRICH",accountId:"account-1",monthlyPrice:15,marker:"🪽",markerMonth:"August",markerYear:2026,monthsPaid:1,reminderTone:"male",paysFor:[]},
     {id:"m7",name:"MINE",accountId:"account-2",monthlyPrice:15,marker:"🦉",markerMonth:"October",markerYear:2026,monthsPaid:1,reminderTone:"male",paysFor:[]},
     {id:"m8",name:"BEN",accountId:"account-2",monthlyPrice:15,marker:"🦉",markerMonth:"October",markerYear:2026,monthsPaid:1,reminderTone:"male",paysFor:[]},
-    {id:"m9",name:"Ama",accountId:"account-2",monthlyPrice:15,marker:"🐍",markerMonth:"September",markerYear:2026,monthsPaid:1,reminderTone:"female",paysFor:["m3"]},
+    {id:"m9",name:"AMA",accountId:"account-2",monthlyPrice:15,marker:"🐍",markerMonth:"September",markerYear:2026,monthsPaid:1,reminderTone:"female",paysFor:["m3"]},
     {id:"m10",name:"QUOLEGEO",accountId:"account-2",monthlyPrice:15,marker:"🪽",markerMonth:"August",markerYear:2026,monthsPaid:1,reminderTone:"male",paysFor:[]},
     {id:"m11",name:"JOSEPH",accountId:"account-2",monthlyPrice:15,marker:"🦉",markerMonth:"October",markerYear:2026,monthsPaid:1,reminderTone:"male",paysFor:[]},
-    {id:"m12",name:"Justice- Joseph Gee-",accountId:"account-2",monthlyPrice:15,marker:"🦉",markerMonth:"October",markerYear:2026,monthsPaid:1,reminderTone:"male",paysFor:[]}
+    {id:"m12",name:"JUSTICE",accountId:"account-2",monthlyPrice:15,marker:"🦉",markerMonth:"October",markerYear:2026,monthsPaid:1,reminderTone:"male",paysFor:[]}
   ],payments:[]
 };
 const $=id=>document.getElementById(id);
@@ -34,6 +55,9 @@ function loadData(){
       const seen=new Set(merged.members.map(m=>String(m.name).toLowerCase()));
       defaultData.members.forEach(m=>{if(!merged.members.some(x=>x.id===m.id)&&!seen.has(m.name.toLowerCase()))merged.members.push(structuredClone(m))});
       merged.members.forEach(m=>{
+        if(m.id==="m2"&&/^dorcas/i.test(m.name))m.name="DORCAS";
+        if(m.id==="m12"&&/^justice/i.test(m.name))m.name="JUSTICE";
+        m.name=String(m.name||"").trim().toUpperCase();
         const d=defaultData.members.find(x=>x.id===m.id)||{};
         m.accountId=m.accountId||d.accountId||merged.accounts[0].id;
         m.monthlyPrice=Number(m.monthlyPrice??d.monthlyPrice??15);
@@ -129,7 +153,7 @@ function reminderMessage(group){
   const extras="";
   const polite=payer.reminderTone==="female";
   if(polite)return `Hello ${cleanName(payer.name)}, please the Apple Music is up. Last payment was for ${lastText}, so it’ll be ${money(total)} for ${monthText}${extras}.`;
-  return `Gee, the Apple Music is up. Last payment was for ${lastText}, so it’ll be ${money(total)} for ${monthText}${extras}.`;
+  return `${cleanName(payer.name)}, the Apple Music is up. Last payment was for ${lastText}, so it’ll be ${money(total)} for ${monthText}${extras}.`;
 }
 function renderReminders(mk){
   const groups=data.members.filter(m=>!m.paidBy).map(m=>reminderGroup(m,mk)).filter(Boolean);
@@ -165,30 +189,13 @@ function scrollToId(id){$(id)?.scrollIntoView({behavior:"smooth",block:"start"})
 
 $("paymentMember").addEventListener("change",updatePaymentAmount);$("paymentMonthsPaid").addEventListener("change",updatePaymentAmount);
 $("paymentForm").addEventListener("submit",e=>{e.preventDefault();const memberId=$("paymentMember").value,amount=Number($("paymentAmount").value),months=Number($("paymentMonthsPaid").value||1);if(!memberId||amount<=0)return;const m=member(memberId);data.payments.push({id:uid("pay"),memberId,amount,month:$("paymentMonth").value,date:$("paymentDate").value,monthsPaid:months,note:$("paymentNote").value.trim()});m.monthsPaid=months;saveData();closeSheets();viewedMonth=new Date(Number($("paymentMonth").value.slice(0,4)),Number($("paymentMonth").value.slice(5,7))-1,1);render();toast(`${money(amount)} recorded for ${m.name}`)});
-$("memberForm").addEventListener("submit",e=>{e.preventDefault();const editing=$("memberForm").dataset.editing,payload={name:$("memberName").value.trim(),accountId:$("memberAccount").value,monthlyPrice:Number($("memberPrice").value),marker:$("memberMarker").value};if(!payload.name||payload.monthlyPrice<0)return;if(editing)Object.assign(member(editing),payload);else data.members.push({id:uid("member"),...payload,markerMonth:"October",markerYear:2026,monthsPaid:1,reminderTone:"male",paysFor:[]});saveData();closeSheets();render();toast(editing?"Member updated":"Member added")});
+$("memberForm").addEventListener("submit",e=>{e.preventDefault();const editing=$("memberForm").dataset.editing,payload={name:$("memberName").value.trim().toUpperCase(),accountId:$("memberAccount").value,monthlyPrice:Number($("memberPrice").value),marker:$("memberMarker").value};if(!payload.name||payload.monthlyPrice<0)return;if(editing)Object.assign(member(editing),payload);else data.members.push({id:uid("member"),...payload,markerMonth:"October",markerYear:2026,monthsPaid:1,reminderTone:"male",paysFor:[]});saveData();closeSheets();render();toast(editing?"Member updated":"Member added")});
 $("addAccountButton").onclick=()=>{data.accounts.push({id:uid("account"),name:`Account ${data.accounts.length+1}`,monthlyDefault:15});saveData();renderAccountEditor();render()};
 $("searchInput").addEventListener("input",()=>renderPeople(monthKey(viewedMonth)));$("clearSearch").onclick=()=>{$("searchInput").value="";renderPeople(monthKey(viewedMonth));$("searchInput").focus()};
 $("prevMonth").onclick=()=>{viewedMonth=new Date(viewedMonth.getFullYear(),viewedMonth.getMonth()-1,1);render()};$("nextMonth").onclick=()=>{viewedMonth=new Date(viewedMonth.getFullYear(),viewedMonth.getMonth()+1,1);render()};$("monthTitle").onclick=()=>{viewedMonth=new Date(2026,9,1);render()};
 $("addMember").onclick=()=>openMemberSheet();$("manageAccounts").onclick=()=>openAccountsSheet();$("settingsTab").onclick=()=>openAccountsSheet();
 document.querySelectorAll("[data-close]").forEach(b=>b.onclick=closeSheets);$("backdrop").onclick=closeSheets;
-const views=["home","people","reminders","payments"];
-function applyView(v){
-  if(!views.includes(v))v="home";
-  document.body.dataset.view=v;
-  document.body.classList.remove("splash-open");
-  document.querySelectorAll(".tab[data-tab]").forEach(t=>t.classList.toggle("active",(t.dataset.tab==="overview"?"home":t.dataset.tab)===v));
-  document.querySelectorAll(".top-links [data-tab]").forEach(t=>t.classList.toggle("active",t.dataset.tab===v));
-  window.scrollTo(0,0);
-}
-function goView(v){if(location.hash==="#"+v)applyView(v);else location.hash=v}
-window.addEventListener("hashchange",()=>applyView(location.hash.slice(1)));
-document.querySelectorAll(".tab[data-tab]").forEach(t=>t.onclick=()=>goView(t.dataset.tab==="overview"?"home":t.dataset.tab));
-document.querySelectorAll(".top-links [data-tab]").forEach(b=>b.onclick=()=>goView(b.dataset.tab));
-document.querySelectorAll("[data-landing-target]").forEach(b=>b.onclick=()=>goView(b.dataset.landingTarget));
-$("homeBrand").onclick=()=>goView("home");$("appHome").onclick=()=>goView("home");
-$("enterApp").onclick=()=>goView("people");
-$("landingReminder").onclick=()=>goView("reminders");
-applyView(location.hash.slice(1));
+
 function markGroupPaid(payerId){
   const mk=monthKey(viewedMonth),payer=member(payerId);if(!payer)return;
   const group=reminderGroup(payer,mk);if(!group)return toast("Already up to date");
@@ -234,6 +241,5 @@ $("importData").onclick=()=>$("importFile").click();
 $("importFile").onchange=e=>{const f=e.target.files&&e.target.files[0];if(f)importBackup(f);e.target.value=""};
 function toast(message){const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove("show"),1800)}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}function escapeAttr(s){return escapeHtml(s)}
-render();
-
+try{render()}catch(e){console.error("Music Money render",e)}
 initDuoGallery();

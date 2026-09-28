@@ -1,6 +1,12 @@
-# Music Money v1.71
+# Music Money v1.72
 
 Clean, professional mobile-first Apple-style music subscription tracker.
+
+## v1.72 changes
+- New app icon: a clean black-and-white M with a coin/note head (icons/, favicon, apple-touch-icon, manifest).
+- Names are all caps. Dorcas is DORCAS and the Justice member is just JUSTICE; saved names from older versions are cleaned up on load.
+- The male WhatsApp reminder no longer starts with a hardcoded "Gee,"; it uses the member's name.
+- Homepage buttons now use one click handler that is set up first, and the CSS/JS links carry a version so a stale cached copy can't break them.
 
 ## v1.71 changes
 - Backup: Settings → Export backup saves all data as a JSON file (share sheet on iPhone); Import backup restores it after a confirmation. The data on the device is copied to `music-money-v1-before-import` first.
