@@ -3,8 +3,8 @@
 Clean, professional mobile-first Apple-style music subscription tracker.
 
 ## v2.0 changes
-- Fixed iPhone Home Screen icon handling with newly versioned, uniquely named Apple touch icons so Safari is less likely to reuse an older cached icon.
-- Added 120px, 152px, 167px and 180px Apple touch icon variants plus versioned 32px/192px/512px PNG assets.
+- Fixed iPhone Home Screen icon handling using a single explicit 180px Apple touch icon and matching PWA manifest icons, following the proven working setup used by the reference PWA.
+- Simplified the icon setup to one authoritative 180px Apple touch icon plus 512px PWA icon, with a dedicated favicon.
 - Improved the PWA manifest with explicit `id`, `scope`, `start_url`, description and clean icon references.
 - Added the Apple standalone status-bar metadata.
 - Versioned CSS, JavaScript and manifest references to v2.0.
