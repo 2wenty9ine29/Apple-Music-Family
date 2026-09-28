@@ -24,7 +24,6 @@ const monthKey=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`
 const uid=p=>`${p}-${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
 const monthIndex=(year,month0)=>Number(year)*12+Number(month0);
 let viewedMonth=new Date(2026,9,1);
-document.body.classList.add("splash-open");
 
 function loadData(){
   try{
@@ -134,8 +133,9 @@ function reminderMessage(group){
 }
 function renderReminders(mk){
   const groups=data.members.filter(m=>!m.paidBy).map(m=>reminderGroup(m,mk)).filter(Boolean);
-  $("reminderList").innerHTML=groups.length?groups.map((g,i)=>{const message=reminderMessage(g);const last=[...new Set(g.people.map(lastPaidLabel))].join(" · ");return `<article class="reminder-card ${i===0?'is-expanded':''}" data-reminder-card><button type="button" class="reminder-summary" data-reminder-toggle aria-expanded="${i===0?'true':'false'}"><div><div class="reminder-name">${escapeHtml(g.payer.name)}</div><div class="reminder-meta">Last paid · ${escapeHtml(last)}</div><div class="reminder-due">${escapeHtml(formatMonthList(g.months))}</div></div><div class="reminder-summary-right"><div class="reminder-amount">${money(g.total)}</div><span class="reminder-chevron">⌄</span></div></button><div class="reminder-details"><div class="reminder-message">${escapeHtml(message)}</div><button class="whatsapp-button" data-whatsapp="${encodeURIComponent(message)}">Send on WhatsApp</button></div></article>`}).join(""):`<div class="empty">Everyone is up to date.</div>`;
+  $("reminderList").innerHTML=groups.length?groups.map((g,i)=>{const message=reminderMessage(g);const last=[...new Set(g.people.map(lastPaidLabel))].join(" · ");return `<article class="reminder-card" data-reminder-card><button type="button" class="reminder-summary" data-reminder-toggle aria-expanded="false"><div><div class="reminder-name">${escapeHtml(g.payer.name)}</div><div class="reminder-meta">Last paid · ${escapeHtml(last)}</div><div class="reminder-due">${escapeHtml(formatMonthList(g.months))}</div></div><div class="reminder-summary-right"><div class="reminder-amount">${money(g.total)}</div><span class="reminder-chevron">⌄</span></div></button><div class="reminder-details"><div class="reminder-message">${escapeHtml(message)}</div><button class="whatsapp-button" data-whatsapp="${encodeURIComponent(message)}">Send on WhatsApp</button><button class="save-button secondary mark-paid-button" data-markpaid="${g.payer.id}">Mark paid</button></div></article>`}).join(""):`<div class="empty">Everyone is up to date.</div>`;
   document.querySelectorAll("[data-reminder-toggle]").forEach(b=>b.onclick=()=>{const card=b.closest("[data-reminder-card]"),open=card.classList.toggle("is-expanded");b.setAttribute("aria-expanded",String(open))});
+  document.querySelectorAll("[data-markpaid]").forEach(b=>b.onclick=()=>markGroupPaid(b.dataset.markpaid));
   document.querySelectorAll("[data-whatsapp]").forEach(b=>b.onclick=()=>{const message=decodeURIComponent(b.dataset.whatsapp);window.location.href=`https://wa.me/?text=${encodeURIComponent(message)}`});
 }
 function populateMemberSelects(){
@@ -169,27 +169,69 @@ $("memberForm").addEventListener("submit",e=>{e.preventDefault();const editing=$
 $("addAccountButton").onclick=()=>{data.accounts.push({id:uid("account"),name:`Account ${data.accounts.length+1}`,monthlyDefault:15});saveData();renderAccountEditor();render()};
 $("searchInput").addEventListener("input",()=>renderPeople(monthKey(viewedMonth)));$("clearSearch").onclick=()=>{$("searchInput").value="";renderPeople(monthKey(viewedMonth));$("searchInput").focus()};
 $("prevMonth").onclick=()=>{viewedMonth=new Date(viewedMonth.getFullYear(),viewedMonth.getMonth()-1,1);render()};$("nextMonth").onclick=()=>{viewedMonth=new Date(viewedMonth.getFullYear(),viewedMonth.getMonth()+1,1);render()};$("monthTitle").onclick=()=>{viewedMonth=new Date(2026,9,1);render()};
-$("enterApp").onclick=()=>leaveLanding();
-$("appHome").onclick=()=>window.scrollTo({top:0,behavior:"smooth"});$("addMember").onclick=()=>openMemberSheet();$("manageAccounts").onclick=()=>openAccountsSheet();$("settingsTab").onclick=()=>openAccountsSheet();
-$("landingReminder").onclick=()=>leaveLanding(()=>goTab("reminders",true));
+$("addMember").onclick=()=>openMemberSheet();$("manageAccounts").onclick=()=>openAccountsSheet();$("settingsTab").onclick=()=>openAccountsSheet();
 document.querySelectorAll("[data-close]").forEach(b=>b.onclick=closeSheets);$("backdrop").onclick=closeSheets;
-const tabSections={overview:"overviewSection",people:"peopleSection",reminders:"remindersSection",payments:"paymentsSection"};
-function goTab(target,instant=false){
-  document.querySelectorAll(".tab[data-tab]").forEach(t=>t.classList.toggle("active",t.dataset.tab===target));
-  const el=$(tabSections[target]);if(!el)return;
-  const top=el.getBoundingClientRect().top+window.pageYOffset;
-  window.scrollTo({top:Math.max(0,top-8),behavior:instant?"auto":"smooth"});
-}
-function leaveLanding(done){
-  const splash=$("splash");
+const views=["home","people","reminders","payments"];
+function applyView(v){
+  if(!views.includes(v))v="home";
+  document.body.dataset.view=v;
   document.body.classList.remove("splash-open");
-  if(!splash){if(done)done();return}
-  splash.classList.add("hide");
-  setTimeout(()=>{splash.remove();window.scrollTo(0,0);if(done)requestAnimationFrame(()=>requestAnimationFrame(done))},380);
+  document.querySelectorAll(".tab[data-tab]").forEach(t=>t.classList.toggle("active",(t.dataset.tab==="overview"?"home":t.dataset.tab)===v));
+  document.querySelectorAll(".top-links [data-tab]").forEach(t=>t.classList.toggle("active",t.dataset.tab===v));
+  window.scrollTo(0,0);
 }
-document.querySelectorAll(".tab[data-tab]").forEach(tab=>tab.onclick=()=>goTab(tab.dataset.tab));
-document.querySelectorAll(".top-links [data-tab]").forEach(b=>b.onclick=()=>goTab(b.dataset.tab));
-document.querySelectorAll("[data-landing-target]").forEach(b=>b.onclick=()=>{const target=b.dataset.landingTarget;leaveLanding(()=>goTab(target,true))});
+function goView(v){if(location.hash==="#"+v)applyView(v);else location.hash=v}
+window.addEventListener("hashchange",()=>applyView(location.hash.slice(1)));
+document.querySelectorAll(".tab[data-tab]").forEach(t=>t.onclick=()=>goView(t.dataset.tab==="overview"?"home":t.dataset.tab));
+document.querySelectorAll(".top-links [data-tab]").forEach(b=>b.onclick=()=>goView(b.dataset.tab));
+document.querySelectorAll("[data-landing-target]").forEach(b=>b.onclick=()=>goView(b.dataset.landingTarget));
+$("homeBrand").onclick=()=>goView("home");$("appHome").onclick=()=>goView("home");
+$("enterApp").onclick=()=>goView("people");
+$("landingReminder").onclick=()=>goView("reminders");
+applyView(location.hash.slice(1));
+function markGroupPaid(payerId){
+  const mk=monthKey(viewedMonth),payer=member(payerId);if(!payer)return;
+  const group=reminderGroup(payer,mk);if(!group)return toast("Already up to date");
+  if(!confirm(`Mark ${group.people.map(p=>cleanName(p.name)||p.name).join(" & ")} as paid through ${monthLabelFromKey(mk)}? Total ${money(group.total)}.`))return;
+  const [y,mo]=mk.split("-").map(Number),name=monthNames[mo-1],today=new Date().toISOString().slice(0,10);
+  group.people.forEach(m=>{
+    const n=unpaidMonthsFor(m,mk).length;if(!n)return;
+    data.payments.push({id:uid("pay"),memberId:m.id,amount:n*Number(m.monthlyPrice||15),month:mk,date:today,monthsPaid:n,note:"Marked paid from reminder"});
+    m.markerMonth=name;m.markerYear=y;m.marker=markerForMonth(name);m.monthsPaid=n;
+  });
+  saveData();render();toast(`Marked paid · ${money(group.total)}`);
+}
+function backupFileName(){return `music-money-backup-${new Date().toISOString().slice(0,10)}.json`}
+async function exportBackup(){
+  const payload=JSON.stringify({app:"music-money",storageKey:KEY,exportedAt:new Date().toISOString(),data},null,2);
+  const file=new File([payload],backupFileName(),{type:"application/json"});
+  try{
+    if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"Music Money backup"});return toast("Backup ready")}
+  }catch(e){if(e&&e.name==="AbortError")return}
+  const url=URL.createObjectURL(file),a=document.createElement("a");a.href=url;a.download=file.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);toast("Backup downloaded");
+}
+function validBackup(d){
+  return d&&Array.isArray(d.accounts)&&Array.isArray(d.members)&&Array.isArray(d.payments)&&d.accounts.every(a=>a&&a.id&&a.name!==undefined)&&d.members.every(m=>m&&m.id&&m.name&&m.accountId);
+}
+function importBackup(file){
+  const reader=new FileReader();
+  reader.onerror=()=>toast("Could not read that file");
+  reader.onload=()=>{
+    let parsed;try{parsed=JSON.parse(reader.result)}catch(e){return toast("That is not a valid backup file")}
+    const incoming=parsed&&parsed.data?parsed.data:parsed;
+    if(!validBackup(incoming))return toast("That file is not a Music Money backup");
+    if(!confirm(`Replace the data on this device with the backup?\n\nBackup: ${incoming.members.length} members, ${incoming.payments.length} payments.\nCurrent: ${data.members.length} members, ${data.payments.length} payments.\n\nYour current data is kept as a safety copy first.`))return;
+    try{
+      localStorage.setItem(KEY+"-before-import",JSON.stringify(data));
+      localStorage.setItem(KEY,JSON.stringify(incoming));
+      data=loadData();saveData();closeSheets();render();toast("Backup imported");
+    }catch(e){console.error("Music Money import failed",e);toast("Import failed — nothing was changed")}
+  };
+  reader.readAsText(file);
+}
+$("exportData").onclick=exportBackup;
+$("importData").onclick=()=>$("importFile").click();
+$("importFile").onchange=e=>{const f=e.target.files&&e.target.files[0];if(f)importBackup(f);e.target.value=""};
 function toast(message){const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove("show"),1800)}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}function escapeAttr(s){return escapeHtml(s)}
 render();

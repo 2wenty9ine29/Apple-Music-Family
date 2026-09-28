@@ -1,6 +1,15 @@
-# Music Money v1.69
+# Music Money v1.71
 
 Clean, professional mobile-first Apple-style music subscription tracker.
+
+## v1.71 changes
+- Backup: Settings → Export backup saves all data as a JSON file (share sheet on iPhone); Import backup restores it after a confirmation. The data on the device is copied to `music-money-v1-before-import` first.
+- Reminders: a Mark paid button records the amount due for that reminder (including linked members) through the viewed month.
+
+## v1.70 changes
+- The landing page is now the permanent Overview: it no longer disappears. The bottom bar (Overview / People / Reminders / Payments) and the top links switch between pages, and Overview / the Music Money name returns home.
+- Each page shows only its own content; the browser back button returns to the previous page.
+- Reminders are all collapsed until you tap their arrow.
 
 ## v1.69 changes (fix only, no design changes)
 - Fixed the crash that left the People list blank: render() wrote to two elements (heroBalance, heroPaid) that no longer exist in the landing page, throwing before People, Payments, Reminders and the photo gallery were drawn.

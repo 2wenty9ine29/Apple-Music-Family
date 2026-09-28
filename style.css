@@ -27,3 +27,18 @@ body.splash-open{overflow:hidden}.landing{min-height:100vh;background:#fff}.land
 .duo-photo-overlay{position:absolute;inset:0;z-index:2;color:#fff;padding:18px 20px;display:flex;flex-direction:column;justify-content:space-between}.duo-photo-time{font-size:11px;font-weight:600}.duo-photo-bottom{display:flex;flex-direction:column;gap:4px}.duo-photo-bottom strong{font-size:20px;letter-spacing:-.03em}.duo-photo-bottom span{font-size:11px;color:rgba(255,255,255,.8)}.duo-photo-dots{display:flex;gap:5px;align-items:center}.duo-photo-dots i{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.45);transition:all .2s ease}.duo-photo-dots i.active{width:14px;border-radius:5px;background:#fff}
 @media(max-width:800px){.duo-photo-frame{min-height:390px;border-radius:24px}.duo-photo-overlay{padding:14px 16px}.duo-photo-bottom strong{font-size:16px}.duo-photo-bottom span{font-size:9px}}
 @media(max-width:520px){.duo-photo-frame{min-height:235px;border-radius:20px}.reminder-summary{padding:16px}.reminder-details{padding-left:16px;padding-right:16px}.reminder-card.is-expanded .reminder-details{padding-bottom:16px}}
+
+/* V1.70 — persistent home + page views (no visual redesign) */
+body[data-view="home"] .topbar,body[data-view="home"] main{display:none}
+body[data-view="home"] .app-shell{padding:0}
+body:not([data-view="home"]) #splash{display:none}
+body[data-view="people"] #remindersSection,body[data-view="people"] #paymentsSection,
+body[data-view="reminders"] #peopleSection,body[data-view="reminders"] #accountsSection,body[data-view="reminders"] #paymentsSection,
+body[data-view="payments"] #peopleSection,body[data-view="payments"] #accountsSection,body[data-view="payments"] #remindersSection{display:none}
+body[data-view="reminders"] .quick-stats,body[data-view="payments"] .quick-stats{display:none}
+.top-links button.active{font-weight:600}
+.reminder-card:not(.is-expanded) .reminder-details{display:none}
+
+/* V1.71 — mark paid + backup */
+.mark-paid-button{margin-top:10px}
+#accountsSheet #exportData,#accountsSheet #importData{margin-top:10px}
