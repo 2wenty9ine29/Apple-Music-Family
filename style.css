@@ -27,14 +27,3 @@ body.splash-open{overflow:hidden}.landing{min-height:100vh;background:#fff}.land
 .duo-photo-overlay{position:absolute;inset:0;z-index:2;color:#fff;padding:18px 20px;display:flex;flex-direction:column;justify-content:space-between}.duo-photo-time{font-size:11px;font-weight:600}.duo-photo-bottom{display:flex;flex-direction:column;gap:4px}.duo-photo-bottom strong{font-size:20px;letter-spacing:-.03em}.duo-photo-bottom span{font-size:11px;color:rgba(255,255,255,.8)}.duo-photo-dots{display:flex;gap:5px;align-items:center}.duo-photo-dots i{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.45);transition:all .2s ease}.duo-photo-dots i.active{width:14px;border-radius:5px;background:#fff}
 @media(max-width:800px){.duo-photo-frame{min-height:390px;border-radius:24px}.duo-photo-overlay{padding:14px 16px}.duo-photo-bottom strong{font-size:16px}.duo-photo-bottom span{font-size:9px}}
 @media(max-width:520px){.duo-photo-frame{min-height:235px;border-radius:20px}.reminder-summary{padding:16px}.reminder-details{padding-left:16px;padding-right:16px}.reminder-card.is-expanded .reminder-details{padding-bottom:16px}}
-/* V1.69 expandable reminders */
-.reminder-card{overflow:hidden;padding:0;gap:0;transition:box-shadow .2s ease}
-.reminder-summary{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;border:0;background:#fff;text-align:left;padding:17px;cursor:pointer}
-.reminder-summary>div:first-child{min-width:0}
-.reminder-due{color:#1d1d1f;font-size:13px;margin-top:7px}
-.reminder-summary-right{display:flex;align-items:center;gap:12px;flex:0 0 auto}
-.reminder-chevron{color:#8a8a8f;font-size:20px;transition:transform .2s ease}
-.reminder-details{display:grid;gap:10px;padding:0 17px 17px;max-height:0;overflow:hidden;opacity:0;transition:max-height .28s ease,opacity .2s ease,padding .28s ease}
-.reminder-card.is-expanded .reminder-details{max-height:260px;opacity:1}
-.reminder-card.is-expanded .reminder-chevron{transform:rotate(180deg)}
-.reminder-card.is-expanded .reminder-details{padding-top:0}

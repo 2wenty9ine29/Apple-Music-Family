@@ -29,16 +29,24 @@ document.body.classList.add("splash-open");
 function loadData(){
   try{
     const saved=JSON.parse(localStorage.getItem(KEY));
-    if(saved?.accounts&&saved?.members&&saved?.payments){
-      const byName=new Map(saved.members.map(m=>[String(m.name).toLowerCase(),m]));
-      const merged=structuredClone(defaultData);
-      merged.accounts=defaultData.accounts.map(a=>saved.accounts.find(x=>x.id===a.id)||a);
-      merged.payments=saved.payments||[];
-      merged.members=defaultData.members.map(m=>({...m,...(byName.get(m.name.toLowerCase())||{}),id:m.id,accountId:m.accountId,monthlyPrice:Number((byName.get(m.name.toLowerCase())||m).monthlyPrice||15),paysFor:Array.isArray((byName.get(m.name.toLowerCase())||{}).paysFor)?(byName.get(m.name.toLowerCase()).paysFor):m.paysFor||[]}));
-      merged.members.forEach(m=>{m.markerYear=Number(m.markerYear||2026);m.monthsPaid=Math.max(1,Number(m.monthsPaid||1));m.paysFor=m.paysFor||[]});
+    if(saved&&Array.isArray(saved.accounts)&&Array.isArray(saved.members)&&Array.isArray(saved.payments)){
+      const merged=structuredClone(saved);
+      defaultData.accounts.forEach(a=>{if(!merged.accounts.some(x=>x.id===a.id))merged.accounts.push(structuredClone(a))});
+      const seen=new Set(merged.members.map(m=>String(m.name).toLowerCase()));
+      defaultData.members.forEach(m=>{if(!merged.members.some(x=>x.id===m.id)&&!seen.has(m.name.toLowerCase()))merged.members.push(structuredClone(m))});
+      merged.members.forEach(m=>{
+        const d=defaultData.members.find(x=>x.id===m.id)||{};
+        m.accountId=m.accountId||d.accountId||merged.accounts[0].id;
+        m.monthlyPrice=Number(m.monthlyPrice??d.monthlyPrice??15);
+        m.markerMonth=m.markerMonth||d.markerMonth||"October";
+        m.markerYear=Number(m.markerYear||2026);
+        m.monthsPaid=Math.max(1,Number(m.monthsPaid||1));
+        m.reminderTone=m.reminderTone||d.reminderTone||"male";
+        m.paysFor=Array.isArray(m.paysFor)?m.paysFor:(d.paysFor||[]);
+      });
       return merged;
     }
-  }catch(e){}
+  }catch(e){console.error("Music Money: could not read saved data",e)}
   return structuredClone(defaultData);
 }
 let data=loadData();
@@ -71,12 +79,24 @@ function currentTotals(mk){
   data.payments.filter(p=>p.month===mk).forEach(p=>collected+=Number(p.amount||0));
   return {outstanding,collected,credit,paidCount,dueCount};
 }
+
+function initDuoGallery(){
+  const photos=[...document.querySelectorAll(".duo-photo")],dots=[...document.querySelectorAll(".duo-photo-dots i")];
+  if(!photos.length)return;
+  let index=0;
+  setInterval(()=>{
+    photos[index].classList.remove("is-active");dots[index]?.classList.remove("active");
+    index=(index+1)%photos.length;
+    photos[index].classList.add("is-active");dots[index]?.classList.add("active");
+  },4500);
+}
+
 function render(){
   const mk=monthKey(viewedMonth),t=currentTotals(mk);
   $("monthTitle").textContent=`${monthNames[viewedMonth.getMonth()]} ${viewedMonth.getFullYear()}`;
   $("outstandingTotal").textContent=money(t.outstanding);$("collectedTotal").textContent=money(t.collected);$("creditTotal").textContent=money(t.credit);$("memberTotal").textContent=data.members.length;
   $("paidCount").textContent=`${t.paidCount} paid`;$("dueCount").textContent=`${t.dueCount} outstanding`;
-  $("heroOutstanding").textContent=money(t.outstanding);
+  const heroTotal=$("heroOutstanding");if(heroTotal)heroTotal.textContent=money(t.outstanding); // landing-page element; gone once the app is entered
   renderAccounts(mk);renderPeople(mk);renderPayments(mk);renderReminders(mk);populateMemberSelects();
 }
 function renderAccounts(mk){
@@ -107,23 +127,14 @@ function formatMonthList(keys){
 function reminderMessage(group){
   const {payer,people,months,total}=group;const monthText=formatMonthList(months);const lastLabels=[...new Set(people.map(lastPaidLabel))];
   const lastText=lastLabels.length===1?lastLabels[0]:lastLabels.join(" and ");
+  const extras="";
   const polite=payer.reminderTone==="female";
-  if(polite)return `Hello ${cleanName(payer.name)}, please the Apple Music is up. Last payment was for ${lastText}, so it’ll be ${money(total)} for ${monthText}.`;
-  return `Gee, the Apple Music is up. Last payment was for ${lastText}, so it’ll be ${money(total)} for ${monthText}.`;
+  if(polite)return `Hello ${cleanName(payer.name)}, please the Apple Music is up. Last payment was for ${lastText}, so it’ll be ${money(total)} for ${monthText}${extras}.`;
+  return `Gee, the Apple Music is up. Last payment was for ${lastText}, so it’ll be ${money(total)} for ${monthText}${extras}.`;
 }
 function renderReminders(mk){
   const groups=data.members.filter(m=>!m.paidBy).map(m=>reminderGroup(m,mk)).filter(Boolean);
-  $("reminderList").innerHTML=groups.length?groups.map((g,i)=>{
-    const message=reminderMessage(g);
-    const last=[...new Set(g.people.map(lastPaidLabel))].join(" · ");
-    return `<article class="reminder-card ${i===0?"is-expanded":""}" data-reminder-card>
-      <button type="button" class="reminder-summary" data-reminder-toggle aria-expanded="${i===0?"true":"false"}">
-        <div><div class="reminder-name">${escapeHtml(g.payer.name)}</div><div class="reminder-meta">Last paid · ${escapeHtml(last)}</div><div class="reminder-due">${escapeHtml(formatMonthList(g.months))}</div></div>
-        <div class="reminder-summary-right"><div class="reminder-amount">${money(g.total)}</div><span class="reminder-chevron">⌄</span></div>
-      </button>
-      <div class="reminder-details"><div class="reminder-message">${escapeHtml(message)}</div><button class="whatsapp-button" data-whatsapp="${encodeURIComponent(message)}">Send on WhatsApp</button></div>
-    </article>`
-  }).join(""):`<div class="empty">Everyone is up to date.</div>`;
+  $("reminderList").innerHTML=groups.length?groups.map((g,i)=>{const message=reminderMessage(g);const last=[...new Set(g.people.map(lastPaidLabel))].join(" · ");return `<article class="reminder-card ${i===0?'is-expanded':''}" data-reminder-card><button type="button" class="reminder-summary" data-reminder-toggle aria-expanded="${i===0?'true':'false'}"><div><div class="reminder-name">${escapeHtml(g.payer.name)}</div><div class="reminder-meta">Last paid · ${escapeHtml(last)}</div><div class="reminder-due">${escapeHtml(formatMonthList(g.months))}</div></div><div class="reminder-summary-right"><div class="reminder-amount">${money(g.total)}</div><span class="reminder-chevron">⌄</span></div></button><div class="reminder-details"><div class="reminder-message">${escapeHtml(message)}</div><button class="whatsapp-button" data-whatsapp="${encodeURIComponent(message)}">Send on WhatsApp</button></div></article>`}).join(""):`<div class="empty">Everyone is up to date.</div>`;
   document.querySelectorAll("[data-reminder-toggle]").forEach(b=>b.onclick=()=>{const card=b.closest("[data-reminder-card]"),open=card.classList.toggle("is-expanded");b.setAttribute("aria-expanded",String(open))});
   document.querySelectorAll("[data-whatsapp]").forEach(b=>b.onclick=()=>{const message=decodeURIComponent(b.dataset.whatsapp);window.location.href=`https://wa.me/?text=${encodeURIComponent(message)}`});
 }
@@ -158,21 +169,29 @@ $("memberForm").addEventListener("submit",e=>{e.preventDefault();const editing=$
 $("addAccountButton").onclick=()=>{data.accounts.push({id:uid("account"),name:`Account ${data.accounts.length+1}`,monthlyDefault:15});saveData();renderAccountEditor();render()};
 $("searchInput").addEventListener("input",()=>renderPeople(monthKey(viewedMonth)));$("clearSearch").onclick=()=>{$("searchInput").value="";renderPeople(monthKey(viewedMonth));$("searchInput").focus()};
 $("prevMonth").onclick=()=>{viewedMonth=new Date(viewedMonth.getFullYear(),viewedMonth.getMonth()-1,1);render()};$("nextMonth").onclick=()=>{viewedMonth=new Date(viewedMonth.getFullYear(),viewedMonth.getMonth()+1,1);render()};$("monthTitle").onclick=()=>{viewedMonth=new Date(2026,9,1);render()};
-$("enterApp").onclick=()=>{$("splash").classList.add("hide");document.body.classList.remove("splash-open");$("appShell").scrollIntoView({behavior:"smooth",block:"start"});setTimeout(()=>$('splash')?.remove(),500)};
+$("enterApp").onclick=()=>leaveLanding();
 $("appHome").onclick=()=>window.scrollTo({top:0,behavior:"smooth"});$("addMember").onclick=()=>openMemberSheet();$("manageAccounts").onclick=()=>openAccountsSheet();$("settingsTab").onclick=()=>openAccountsSheet();
-$("landingReminder").onclick=()=>{if(document.body.classList.contains("splash-open")){document.body.classList.remove("splash-open");$("splash").classList.add("hide");setTimeout(()=>$('splash')?.remove(),500)}setTimeout(()=>scrollToId("remindersSection"),520)};
+$("landingReminder").onclick=()=>leaveLanding(()=>goTab("reminders",true));
 document.querySelectorAll("[data-close]").forEach(b=>b.onclick=closeSheets);$("backdrop").onclick=closeSheets;
-function goTab(target){document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.tab===target));const map={overview:"overviewSection",people:"peopleSection",reminders:"remindersSection",payments:"paymentsSection"};if(map[target])scrollToId(map[target]);}
-document.querySelectorAll(".tab[data-tab], .top-links [data-tab]").forEach(tab=>tab.onclick=()=>goTab(tab.dataset.tab));
-document.querySelectorAll("[data-landing-target]").forEach(b=>b.onclick=()=>{const target=b.dataset.landingTarget;if(document.body.classList.contains("splash-open")){document.body.classList.remove("splash-open");$("splash").classList.add("hide");setTimeout(()=>$('splash')?.remove(),500)}setTimeout(()=>goTab(target),520)});
+const tabSections={overview:"overviewSection",people:"peopleSection",reminders:"remindersSection",payments:"paymentsSection"};
+function goTab(target,instant=false){
+  document.querySelectorAll(".tab[data-tab]").forEach(t=>t.classList.toggle("active",t.dataset.tab===target));
+  const el=$(tabSections[target]);if(!el)return;
+  const top=el.getBoundingClientRect().top+window.pageYOffset;
+  window.scrollTo({top:Math.max(0,top-8),behavior:instant?"auto":"smooth"});
+}
+function leaveLanding(done){
+  const splash=$("splash");
+  document.body.classList.remove("splash-open");
+  if(!splash){if(done)done();return}
+  splash.classList.add("hide");
+  setTimeout(()=>{splash.remove();window.scrollTo(0,0);if(done)requestAnimationFrame(()=>requestAnimationFrame(done))},380);
+}
+document.querySelectorAll(".tab[data-tab]").forEach(tab=>tab.onclick=()=>goTab(tab.dataset.tab));
+document.querySelectorAll(".top-links [data-tab]").forEach(b=>b.onclick=()=>goTab(b.dataset.tab));
+document.querySelectorAll("[data-landing-target]").forEach(b=>b.onclick=()=>{const target=b.dataset.landingTarget;leaveLanding(()=>goTab(target,true))});
 function toast(message){const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove("show"),1800)}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}function escapeAttr(s){return escapeHtml(s)}
-function initDuoGallery(){
-  const photos=[...document.querySelectorAll(".duo-photo")],dots=[...document.querySelectorAll(".duo-photo-dots i")];
-  if(!photos.length)return;
-  let index=0;
-  setInterval(()=>{photos[index].classList.remove("is-active");dots[index]?.classList.remove("active");index=(index+1)%photos.length;photos[index].classList.add("is-active");dots[index]?.classList.add("active")},4500);
-}
-
 render();
+
 initDuoGallery();
