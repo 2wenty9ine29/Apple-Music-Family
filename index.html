@@ -9,53 +9,27 @@
 </head>
 <body>
   <section class="splash" id="splash" aria-label="Music Money introduction">
-    <div class="splash-space" aria-hidden="true">
-      <div class="nebula nebula-green"></div>
-      <div class="nebula nebula-blue"></div>
-      <div class="nebula nebula-red"></div>
-      <div class="stars stars-a"></div>
-      <div class="stars stars-b"></div>
-
-      <div class="dashboard-ghost">
-        <div class="ghost-top"><b>Music Money</b><span>October</span></div>
-        <div class="ghost-cards"><i></i><i></i><i></i></div>
-        <div class="ghost-lines"><i></i><i></i><i></i><i></i></div>
+    <div class="splash-nav"><span class="mini-mark">MM</span><span class="mini-pill">FAMILY SUBSCRIPTIONS</span><span class="mini-line"></span></div>
+    <div class="splash-hero">
+      <div class="hero-copy">
+        <div class="splash-kicker">YOUR FAMILY. YOUR PAYMENTS.</div>
+        <h1>Music<br><span>Money.</span></h1>
+        <p>Everything paid. Nothing forgotten.</p>
+        <button class="enter-button" id="enterApp" type="button">Open Music Money <span>→</span></button>
       </div>
-
-      <div class="orbit orbit-large"><span class="orbit-path"></span>
-        <div class="planet planet-music">
-          <img src="https://cdn.simpleicons.org/applemusic/ffffff" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
-          <span class="logo-fallback">M</span>
-          <b>Music</b>
+      <div class="splash-product" aria-hidden="true">
+        <div class="product-glow"></div>
+        <div class="product-card">
+          <div class="product-top"><b>OCTOBER</b><span>12 MEMBERS</span></div>
+          <div class="product-total">GH₵90</div>
+          <div class="product-label">OUTSTANDING</div>
+          <div class="product-bars"><i></i><i></i><i></i><i></i></div>
+          <div class="product-foot"><span>Music Money</span><span>›</span></div>
         </div>
-      </div>
-      <div class="orbit orbit-medium"><span class="orbit-path"></span>
-        <div class="planet planet-tv">
-          <img src="https://cdn.simpleicons.org/appletv/ffffff" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
-          <span class="logo-fallback">TV</span>
-          <b>TV</b>
-        </div>
-      </div>
-      <div class="orbit orbit-small"><span class="orbit-path"></span>
-        <div class="planet planet-cloud">
-          <img src="https://cdn.simpleicons.org/icloud/ffffff" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
-          <span class="logo-fallback">☁</span>
-          <b>iCloud</b>
-        </div>
-      </div>
-
-      <div class="sun-core">
-        <div class="sun-glow"></div>
-        <div class="sun-sphere"><span>MM</span><small>MUSIC MONEY</small></div>
+        <div class="product-reflection"></div>
       </div>
     </div>
-
-    <div class="splash-content">
-      <div class="splash-kicker">FAMILY SUBSCRIPTIONS</div>
-      <h1>Music <span>Money</span></h1>
-      <p>One place for every payment.<br><em>Clear. Calm. Current.</em></p>
-      <button class="enter-button" id="enterApp" type="button">Open Music Money <span>→</span></button>
-    </div>
+    <div class="splash-bottom"><span>Clear.</span><span>Calm.</span><span>Current.</span></div>
   </section>
   <div class="app-shell">
     <header class="topbar">
@@ -153,8 +127,11 @@
       <label>Member
         <select id="paymentMember" required></select>
       </label>
+      <label>Months paid for
+        <select id="paymentMonthsPaid"><option value="1">1 month</option><option value="2">2 months</option><option value="3">3 months</option><option value="4">4 months</option><option value="5">5 months</option><option value="6">6 months</option><option value="7">7 months</option><option value="8">8 months</option><option value="9">9 months</option><option value="10">10 months</option><option value="11">11 months</option><option value="12">12 months</option></select>
+      </label>
       <label>Amount
-        <input id="paymentAmount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="20" required />
+        <input id="paymentAmount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="15" required readonly />
       </label>
       <label>Apply to
         <input id="paymentMonth" type="month" required />

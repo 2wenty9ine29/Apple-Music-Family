@@ -1,65 +1,18 @@
-# Music Money v1.2
+# Music Money v1.5
 
-A lightweight Apple-inspired family subscription payment tracker.
+Clean, professional mobile-first family subscription tracker.
 
-## Features
-
-- Two accounts included by default
-- Add, rename and manage accounts
-- Add/edit members
-- Individual monthly prices
-- Automatically follows the current month
-- Previous/next month navigation
-- Record real payment amounts instead of only a paid checkbox
-- Automatically handles underpayments, normal payments and overpayments
-- Carries overpayment credit into future months
-- Shows outstanding balance
-- Shows credit held
-- Member search
-- Individual payment history
-- Data persists in the browser using localStorage
-- No build step, framework or external dependency
-
-## Run locally
-
-Open `index.html` in a browser.
+## v1.5 changes
+- Replaced the planetary opening with a clean, Apple-style product landing screen.
+- Improved iPhone/Safari safe-area sizing and splash interaction lock.
+- People are separated into Account 1 and Account 2.
+- October settlement markers show GH₵0 debt; August/September/April markers calculate outstanding debt from the settled-through month.
+- Tap any member to open their payment controls.
+- Select 1–12 months paid for; the amount is calculated automatically at GH₵15/month.
+- Select the member's last paid month; the People list immediately shows that month as their last payment.
+- Coverage updates replace the previous coverage record instead of stacking duplicates.
+- Advanced payment entry remains available for exact/custom payment records.
+- Payment history and localStorage persistence remain enabled.
 
 ## GitHub Pages
-
-1. Create a new GitHub repository.
-2. Upload `index.html`, `style.css`, and `app.js`.
-3. Go to **Settings → Pages**.
-4. Under **Build and deployment**, choose **Deploy from a branch**.
-5. Select your main branch and `/ (root)`.
-6. Save.
-
-GitHub will give you a public Pages URL.
-
-## Important
-
-This first version stores data locally in the browser. If you open the app on another phone/browser, it will have its own data.
-
-A future version can add cloud sync/login, CSV export, receipts, reminders, payment filters and a proper reports dashboard.
-
-
-## v1.1
-- GH₵15/month
-- 12 preloaded members across 2 accounts
-- Payment markers mapped to their reference months
-- Premium black/white/Volt/red/blue visual system
-- Apple Music-inspired opening screen with glass effect
-- Main plus button removed
-
-
-## v1.2
-- Member rows show last payment date and total debt only.
-- Payment marker emojis are hidden from the main list.
-- Cinematic Apple-family-services opening with Music, TV and iCloud orbiting the center and a dashboard preview behind.
-- Account groups remain separate.
-
-
-## v1.4
-- Full-screen iPhone-safe planetary opening scene.
-- Apple Music, Apple TV and iCloud logo images with fallbacks.
-- Only the Open Music Money button is interactive while the intro is open.
-- Body scrolling is locked until the intro is dismissed.
+Upload the four files in this folder to the root of your GitHub repository and enable GitHub Pages from the `main` branch and `/ (root)`.
