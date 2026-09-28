@@ -1,6 +1,15 @@
-# Music Money v1.72
+# Music Money v1.75
 
 Clean, professional mobile-first Apple-style music subscription tracker.
+
+## v1.75 changes
+- New app icon: original winged-blade hero emblem in a gold hexagon on near-black (no letter).
+
+## v1.74 changes
+- New app icon: original gold shield badge with a white M and a star on a navy background.
+
+## v1.73 changes
+- Names stay in caps inside the app, but WhatsApp reminders use only the first letter of each name capitalised (e.g. Dorcas, Ama’s Sister).
 
 ## v1.72 changes
 - New app icon: a clean black-and-white M with a coin/note head (icons/, favicon, apple-touch-icon, manifest).

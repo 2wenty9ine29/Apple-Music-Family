@@ -152,8 +152,8 @@ function reminderMessage(group){
   const lastText=lastLabels.length===1?lastLabels[0]:lastLabels.join(" and ");
   const extras="";
   const polite=payer.reminderTone==="female";
-  if(polite)return `Hello ${cleanName(payer.name)}, please the Apple Music is up. Last payment was for ${lastText}, so it’ll be ${money(total)} for ${monthText}${extras}.`;
-  return `${cleanName(payer.name)}, the Apple Music is up. Last payment was for ${lastText}, so it’ll be ${money(total)} for ${monthText}${extras}.`;
+  if(polite)return `Hello ${niceName(payer.name)}, please the Apple Music is up. Last payment was for ${lastText}, so it’ll be ${money(total)} for ${monthText}${extras}.`;
+  return `${niceName(payer.name)}, the Apple Music is up. Last payment was for ${lastText}, so it’ll be ${money(total)} for ${monthText}${extras}.`;
 }
 function renderReminders(mk){
   const groups=data.members.filter(m=>!m.paidBy).map(m=>reminderGroup(m,mk)).filter(Boolean);
@@ -184,6 +184,7 @@ function openMemberDetail(id){
   $("saveCoverage").onclick=()=>{const idx=Number($("lastPaidMonth").value),year=Number(m.markerYear||2026),name=monthNames[idx];m.monthsPaid=selected;m.markerMonth=name;m.markerYear=year;m.marker=markerForMonth(name);const target=`${year}-${String(idx+1).padStart(2,"0")}`;data.payments=data.payments.filter(p=>!(p.memberId===m.id&&p.coverage===true));data.payments.push({id:uid("pay"),memberId:m.id,amount:selected*Number(m.monthlyPrice||15),month:target,date:`${target}-01`,monthsPaid:selected,coverage:true,note:"Payment coverage"});saveData();closeSheets();render();toast(`${m.name} updated · ${selected} month${selected===1?"":"s"} paid`)};
   $("detailEditMember").onclick=()=>{closeSheets();openMemberSheet(id)};$("detailAddPayment").onclick=()=>{closeSheets();openPaymentSheet(id)};openSheet("memberDetailSheet");
 }
+function niceName(name){return cleanName(name).toLowerCase().replace(/(^|[\s\u2019'-])(\p{L})/gu,(m,a,b)=>a+b.toUpperCase())}
 function cleanName(name){return String(name||"").replace(/[-_].*$/g,"").trim().replace(/\b\d+(st|nd|rd|th)\b/gi,"").trim()}
 function scrollToId(id){$(id)?.scrollIntoView({behavior:"smooth",block:"start"})}
 
