@@ -76,7 +76,7 @@ function render(){
   $("monthTitle").textContent=`${monthNames[viewedMonth.getMonth()]} ${viewedMonth.getFullYear()}`;
   $("outstandingTotal").textContent=money(t.outstanding);$("collectedTotal").textContent=money(t.collected);$("creditTotal").textContent=money(t.credit);$("memberTotal").textContent=data.members.length;
   $("paidCount").textContent=`${t.paidCount} paid`;$("dueCount").textContent=`${t.dueCount} outstanding`;
-  $("heroOutstanding").textContent=money(t.outstanding);$("heroBalance").textContent=money(t.outstanding);$("heroPaid").textContent=`${t.paidCount} paid`;
+  $("heroOutstanding").textContent=money(t.outstanding);
   renderAccounts(mk);renderPeople(mk);renderPayments(mk);renderReminders(mk);populateMemberSelects();
 }
 function renderAccounts(mk){
@@ -163,7 +163,7 @@ $("appHome").onclick=()=>window.scrollTo({top:0,behavior:"smooth"});$("addMember
 $("landingReminder").onclick=()=>{if(document.body.classList.contains("splash-open")){document.body.classList.remove("splash-open");$("splash").classList.add("hide");setTimeout(()=>$('splash')?.remove(),500)}setTimeout(()=>scrollToId("remindersSection"),520)};
 document.querySelectorAll("[data-close]").forEach(b=>b.onclick=closeSheets);$("backdrop").onclick=closeSheets;
 function goTab(target){document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.tab===target));const map={overview:"overviewSection",people:"peopleSection",reminders:"remindersSection",payments:"paymentsSection"};if(map[target])scrollToId(map[target]);}
-document.querySelectorAll(".tab[data-tab]").forEach(tab=>tab.onclick=()=>goTab(tab.dataset.tab));
+document.querySelectorAll(".tab[data-tab], .top-links [data-tab]").forEach(tab=>tab.onclick=()=>goTab(tab.dataset.tab));
 document.querySelectorAll("[data-landing-target]").forEach(b=>b.onclick=()=>{const target=b.dataset.landingTarget;if(document.body.classList.contains("splash-open")){document.body.classList.remove("splash-open");$("splash").classList.add("hide");setTimeout(()=>$('splash')?.remove(),500)}setTimeout(()=>goTab(target),520)});
 function toast(message){const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove("show"),1800)}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}function escapeAttr(s){return escapeHtml(s)}
