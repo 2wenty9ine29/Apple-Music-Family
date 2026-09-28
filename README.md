@@ -1,4 +1,4 @@
-# Music Money v1.1
+# Music Money v1.2
 
 A lightweight Apple-inspired family subscription payment tracker.
 
@@ -49,3 +49,10 @@ A future version can add cloud sync/login, CSV export, receipts, reminders, paym
 - Premium black/white/Volt/red/blue visual system
 - Apple Music-inspired opening screen with glass effect
 - Main plus button removed
+
+
+## v1.2
+- Member rows show last payment date and total debt only.
+- Payment marker emojis are hidden from the main list.
+- Cinematic Apple-family-services opening with Music, TV and iCloud orbiting the center and a dashboard preview behind.
+- Account groups remain separate.

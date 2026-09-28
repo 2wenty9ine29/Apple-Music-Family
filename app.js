@@ -54,6 +54,8 @@ const markerLegend = {
   "🪽": "August", "🦉": "October", "🛩️": "April", "🛁": "January", "🐍": "September", "🎰": "July"
 };
 function markerFor(m) { return m.marker || ""; }
+function lastPaymentLabel(memberId) { const list=data.payments.filter(p=>p.memberId===memberId).slice().sort((a,b)=>new Date(b.date||b.createdAt||0)-new Date(a.date||a.createdAt||0)); if(!list.length)return "None yet"; const d=new Date(list[0].date||list[0].createdAt); return Number.isNaN(d.getTime())?"Recorded":d.toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"}); }
+function totalDebtForMember(m, monthKey) { const s=typeof statusFor==="function"?statusFor(m,monthKey):null; if(s&&typeof s.debt==="number") return Math.max(0,s.debt); const paid=data.payments.filter(p=>p.memberId===m.id&&(!monthKey||p.monthKey===monthKey)).reduce((x,p)=>x+Number(p.amount||0),0); return Math.max(0,Number(m.monthlyPrice||15)-paid); }
 
 function paymentsForMemberBefore(m, targetMonth) {
   return data.payments
@@ -190,11 +192,7 @@ function renderPeople(mk, accountFilter = null) {
     const a = account(m.accountId);
     return `
       <button class="person-row" data-member="${m.id}">
-        <div class="person-main">
-          <div class="name-line"><span class="member-marker">${markerFor(m)}</span><h3 class="person-name">${escapeHtml(m.name)}</h3></div>
-          <div class="sub">${escapeHtml(a?.name || "No account")} · ${money(m.monthlyPrice)}/month · ${escapeHtml(m.markerMonth || markerLegend[m.marker] || "")}</div>
-        </div>
-        <div class="status ${s.key}"><strong>${s.label}</strong><small>${s.detail}</small></div>
+        <div class="person-main"><h3 class="person-name">${escapeHtml(m.name)}</h3><div class="sub">Last payment: ${lastPaymentLabel(m.id)}</div></div><div class="debt-badge"><small>Total debt</small><strong>${money(totalDebtForMember(m, currentMonthKey()))}</strong></div>
       </button>`;
   }).join("");
 
