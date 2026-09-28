@@ -8,20 +8,55 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <section class="splash" id="splash">
-  <div class="space-scene" aria-hidden="true">
-    <div class="space-glow glow-green"></div><div class="space-glow glow-blue"></div><div class="space-glow glow-red"></div>
-    <div class="orbit-ring ring-1"></div><div class="orbit-ring ring-2"></div><div class="orbit-ring ring-3"></div>
-    <div class="dashboard-preview"><div class="preview-head"><b>Music Money</b><span>October</span></div><div class="preview-stats"><i></i><i></i><i></i></div><div class="preview-list"><span></span><span></span><span></span><span></span></div></div>
-    <div class="sun"><div class="sun-core"><span>MM</span><small>MUSIC MONEY</small></div></div>
-    <div class="planet-orbit planet-orbit-1"><div class="planet planet-music"><img src="https://cdn.simpleicons.org/applemusic/ffffff" alt="Apple Music"/><b>Music</b></div></div>
-    <div class="planet-orbit planet-orbit-2"><div class="planet planet-tv"><img src="https://cdn.simpleicons.org/appletv/ffffff" alt="Apple TV"/><b>TV</b></div></div>
-    <div class="planet-orbit planet-orbit-3"><div class="planet planet-cloud"><img src="https://cdn.simpleicons.org/icloud/ffffff" alt="iCloud"/><b>iCloud</b></div></div>
-    <div class="starfield"></div>
-  </div>
-  <div class="splash-copy"><div class="splash-kicker">FAMILY SUBSCRIPTIONS</div><h1>Music<span> Money</span></h1><p>One place for every payment.<br>Clear. Calm. Current.</p></div>
-  <button class="enter-button" id="enterApp">Open Music Money <span>→</span></button>
-</section>
+  <section class="splash" id="splash" aria-label="Music Money introduction">
+    <div class="splash-space" aria-hidden="true">
+      <div class="nebula nebula-green"></div>
+      <div class="nebula nebula-blue"></div>
+      <div class="nebula nebula-red"></div>
+      <div class="stars stars-a"></div>
+      <div class="stars stars-b"></div>
+
+      <div class="dashboard-ghost">
+        <div class="ghost-top"><b>Music Money</b><span>October</span></div>
+        <div class="ghost-cards"><i></i><i></i><i></i></div>
+        <div class="ghost-lines"><i></i><i></i><i></i><i></i></div>
+      </div>
+
+      <div class="orbit orbit-large"><span class="orbit-path"></span>
+        <div class="planet planet-music">
+          <img src="https://cdn.simpleicons.org/applemusic/ffffff" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
+          <span class="logo-fallback">M</span>
+          <b>Music</b>
+        </div>
+      </div>
+      <div class="orbit orbit-medium"><span class="orbit-path"></span>
+        <div class="planet planet-tv">
+          <img src="https://cdn.simpleicons.org/appletv/ffffff" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
+          <span class="logo-fallback">TV</span>
+          <b>TV</b>
+        </div>
+      </div>
+      <div class="orbit orbit-small"><span class="orbit-path"></span>
+        <div class="planet planet-cloud">
+          <img src="https://cdn.simpleicons.org/icloud/ffffff" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
+          <span class="logo-fallback">☁</span>
+          <b>iCloud</b>
+        </div>
+      </div>
+
+      <div class="sun-core">
+        <div class="sun-glow"></div>
+        <div class="sun-sphere"><span>MM</span><small>MUSIC MONEY</small></div>
+      </div>
+    </div>
+
+    <div class="splash-content">
+      <div class="splash-kicker">FAMILY SUBSCRIPTIONS</div>
+      <h1>Music <span>Money</span></h1>
+      <p>One place for every payment.<br><em>Clear. Calm. Current.</em></p>
+      <button class="enter-button" id="enterApp" type="button">Open Music Money <span>→</span></button>
+    </div>
+  </section>
   <div class="app-shell">
     <header class="topbar">
       <div>

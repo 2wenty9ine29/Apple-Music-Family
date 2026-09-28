@@ -56,3 +56,10 @@ A future version can add cloud sync/login, CSV export, receipts, reminders, paym
 - Payment marker emojis are hidden from the main list.
 - Cinematic Apple-family-services opening with Music, TV and iCloud orbiting the center and a dashboard preview behind.
 - Account groups remain separate.
+
+
+## v1.4
+- Full-screen iPhone-safe planetary opening scene.
+- Apple Music, Apple TV and iCloud logo images with fallbacks.
+- Only the Open Music Money button is interactive while the intro is open.
+- Body scrolling is locked until the intro is dismissed.

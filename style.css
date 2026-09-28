@@ -241,3 +241,105 @@ input:focus, select:focus { border-color:rgba(255,255,255,.35); }
 .debt-badge strong{font-variant-numeric:tabular-nums}.debt-badge small{white-space:nowrap}
 @media (max-width:520px){.space-scene{height:390px}.planet-orbit{width:360px;height:165px;margin-left:-180px;margin-top:-82px}.planet-orbit-2{width:315px;height:145px;margin-left:-157px;margin-top:-72px}.planet-orbit-3{width:270px;height:125px;margin-left:-135px;margin-top:-62px}.planet{width:72px;height:72px;margin-left:-36px;top:-31px}.planet img{width:27px;height:27px}.orbit-ring{width:365px;height:170px}.ring-2{width:310px;height:145px}.ring-3{width:260px;height:120px}.sun{width:125px;height:125px}.sun-core span{font-size:35px}.dashboard-preview{width:300px;height:225px}}
 @media (prefers-reduced-motion:reduce){.space-glow,.starfield,.sun,.planet-orbit,.planet,.splash{animation:none!important}}
+
+/* v1.4 — full-screen planetary opening, tuned for iPhone Safari */
+html, body { overscroll-behavior-y: none; }
+body.splash-open { overflow: hidden; height: 100dvh; }
+.splash {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100dvh;
+  min-height: 100svh;
+  z-index: 9999;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: calc(env(safe-area-inset-top) + 18px) 20px calc(env(safe-area-inset-bottom) + 20px);
+  background: #020304;
+  isolation: isolate;
+  touch-action: manipulation;
+  transition: opacity .55s ease, transform .65s cubic-bezier(.2,.8,.2,1), visibility .55s ease;
+}
+.splash.hide { opacity: 0; visibility: hidden; transform: scale(1.025); pointer-events: none; }
+.splash > * { position: relative; z-index: 2; }
+.splash-space {
+  position: relative;
+  width: min(94vw, 520px);
+  height: min(53vh, 390px);
+  min-height: 330px;
+  flex: 0 0 auto;
+  perspective: 1000px;
+  pointer-events: none;
+}
+.nebula { position:absolute; border-radius:50%; filter:blur(70px); opacity:.22; pointer-events:none; animation: nebulaDrift 12s ease-in-out infinite alternate; }
+.nebula-green { width:240px;height:240px;left:-35px;top:65px;background:#ccff00; }
+.nebula-blue { width:250px;height:250px;right:-55px;top:10px;background:#367cff;animation-delay:-4s; }
+.nebula-red { width:220px;height:220px;left:35%;bottom:-100px;background:#ff304f;animation-delay:-8s; }
+@keyframes nebulaDrift { to { transform:translate3d(24px,-16px,0) scale(1.08); } }
+.stars { position:absolute; inset:-15%; opacity:.5; pointer-events:none; background-image:radial-gradient(circle,rgba(255,255,255,.8) 0 1px,transparent 1.5px),radial-gradient(circle,rgba(255,255,255,.35) 0 1px,transparent 1.5px); background-size:73px 91px,127px 113px; mask-image:radial-gradient(ellipse at center,#000 20%,transparent 76%); -webkit-mask-image:radial-gradient(ellipse at center,#000 20%,transparent 76%); }
+.stars-a { animation: starMoveA 26s linear infinite; }
+.stars-b { opacity:.25; transform:scale(1.2); animation: starMoveB 34s linear infinite reverse; }
+@keyframes starMoveA { to { background-position:110px 75px,20px 120px; transform:rotate(2deg) scale(1.03); } }
+@keyframes starMoveB { to { background-position:-80px 100px,100px -50px; } }
+.dashboard-ghost {
+  position:absolute; z-index:1; left:50%; top:57%; width:min(68vw,350px); height:225px;
+  transform:translate(-50%,-50%) rotateX(58deg) rotateZ(-6deg) translateY(65px);
+  border:1px solid rgba(255,255,255,.08); border-radius:28px;
+  background:linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.015));
+  box-shadow:0 35px 90px rgba(0,0,0,.8); opacity:.32; overflow:hidden;
+  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+}
+.ghost-top{display:flex;justify-content:space-between;padding:20px;color:#aaa;font-size:10px}.ghost-top span{color:#686b72}
+.ghost-cards{display:flex;gap:8px;padding:0 20px 15px}.ghost-cards i{height:38px;flex:1;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.035)}
+.ghost-lines{display:grid;gap:9px;padding:0 20px}.ghost-lines i{height:10px;border-radius:999px;background:rgba(255,255,255,.045)}.ghost-lines i:nth-child(1){width:85%}.ghost-lines i:nth-child(2){width:67%}.ghost-lines i:nth-child(3){width:78%}.ghost-lines i:nth-child(4){width:53%}
+.orbit { position:absolute; left:50%; top:51%; border:1px solid rgba(255,255,255,.105); border-radius:50%; transform:translate(-50%,-50%); transform-style:preserve-3d; animation:orbitSpin linear infinite; }
+.orbit-large { width:430px;height:210px;animation-duration:17s; }
+.orbit-medium { width:335px;height:165px;animation-duration:13s;animation-direction:reverse;transform:translate(-50%,-50%) rotateZ(25deg); }
+.orbit-small { width:255px;height:125px;animation-duration:10s;animation-direction:reverse;transform:translate(-50%,-50%) rotateZ(-31deg); }
+.orbit-path { position:absolute;inset:0;border-radius:50%;box-shadow:0 0 32px rgba(255,255,255,.025); }
+@keyframes orbitSpin { from { transform:translate(-50%,-50%) rotateZ(0deg); } to { transform:translate(-50%,-50%) rotateZ(360deg); } }
+.orbit-medium { animation-name:orbitSpinMedium; }
+.orbit-small { animation-name:orbitSpinSmall; }
+@keyframes orbitSpinMedium { from { transform:translate(-50%,-50%) rotateZ(25deg); } to { transform:translate(-50%,-50%) rotateZ(-335deg); } }
+@keyframes orbitSpinSmall { from { transform:translate(-50%,-50%) rotateZ(-31deg); } to { transform:translate(-50%,-50%) rotateZ(329deg); } }
+.planet {
+  position:absolute; left:50%; top:-34px; width:68px;height:68px;margin-left:-34px;
+  border-radius:50%; display:flex; flex-direction:column; align-items:center;justify-content:center;gap:3px;
+  background:linear-gradient(145deg,rgba(37,39,44,.98),rgba(7,8,10,.98));
+  border:1px solid rgba(255,255,255,.22); box-shadow:0 12px 35px rgba(0,0,0,.7),inset 0 1px rgba(255,255,255,.2);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+}
+.planet img { width:29px;height:29px;display:block;object-fit:contain;filter:drop-shadow(0 3px 7px rgba(0,0,0,.5)); }
+.planet b { font-size:8px;font-weight:800;letter-spacing:.02em;color:#fff; }
+.logo-fallback { display:none; width:29px;height:29px;place-items:center;font-size:13px;font-weight:900;color:#fff; }
+.planet-music { box-shadow:0 0 28px rgba(204,255,0,.15),0 12px 35px rgba(0,0,0,.7); }
+.planet-tv { box-shadow:0 0 28px rgba(70,130,255,.16),0 12px 35px rgba(0,0,0,.7); }
+.planet-cloud { box-shadow:0 0 28px rgba(255,50,80,.14),0 12px 35px rgba(0,0,0,.7); }
+.sun-core { position:absolute; z-index:7;left:50%;top:51%;width:128px;height:128px;transform:translate(-50%,-50%);border-radius:50%;display:grid;place-items:center;animation:sunBreath 4.5s ease-in-out infinite; }
+.sun-glow { position:absolute;inset:-24px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.20),transparent 65%);filter:blur(10px); }
+.sun-sphere { position:relative;width:100%;height:100%;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(circle at 32% 25%,#fff 0 6%,#e4e5e7 13%,#898b90 37%,#25272b 64%,#070809 100%);box-shadow:0 0 0 1px rgba(255,255,255,.24),0 20px 70px rgba(0,0,0,.8),inset -14px -18px 30px rgba(0,0,0,.3); }
+.sun-sphere:after { content:"";position:absolute;inset:0;background:linear-gradient(145deg,rgba(255,255,255,.22),transparent 35%,rgba(0,0,0,.24));mix-blend-mode:screen; }
+.sun-sphere span { position:relative;z-index:1;font-size:35px;font-weight:950;letter-spacing:-.09em;color:#fff; }
+.sun-sphere small { position:relative;z-index:1;margin-top:4px;font-size:6px;letter-spacing:.23em;color:#b9bbc0;font-weight:800; }
+@keyframes sunBreath { 50% { transform:translate(-50%,-50%) scale(1.025); } }
+.splash-content { width:min(92vw,520px);text-align:center;margin-top:-2px;pointer-events:none; }
+.splash-kicker { color:var(--volt);font-size:11px;font-weight:900;letter-spacing:.18em;margin-bottom:13px; }
+.splash h1 { font-size:clamp(48px,14vw,82px);line-height:.92;letter-spacing:-.075em;margin:0; }
+.splash h1 span { color:#fff; }
+.splash-content p { color:#a9a9ae;font-size:16px;line-height:1.42;margin:18px 0 28px; }
+.splash-content p em { font-style:normal;color:#d8d8dc; }
+.enter-button { pointer-events:auto;position:relative;z-index:10;border:0;border-radius:999px;padding:16px 24px;background:#fff;color:#050505;font-size:16px;font-weight:800;cursor:pointer;min-width:min(86vw,360px);box-shadow:0 14px 40px rgba(255,255,255,.13),0 0 0 1px rgba(255,255,255,.3);transition:transform .2s ease,box-shadow .2s ease; }
+.enter-button:active { transform:scale(.975);box-shadow:0 8px 24px rgba(255,255,255,.09); }
+.enter-button span { margin-left:10px;font-size:20px; }
+@media (max-width:520px){
+  .splash-space{height:43vh;min-height:315px;max-height:365px}
+  .orbit-large{width:350px;height:175px}.orbit-medium{width:285px;height:145px}.orbit-small{width:220px;height:112px}
+  .planet{width:64px;height:64px;margin-left:-32px;top:-32px}.planet img{width:27px;height:27px}
+  .sun-core{width:116px;height:116px}.sun-sphere span{font-size:32px}
+  .dashboard-ghost{width:285px;height:205px;top:57%;opacity:.25}
+  .splash-content{margin-top:0}.splash-content p{font-size:15px;margin:16px 0 24px}.enter-button{padding:15px 22px}
+}
+@media (prefers-reduced-motion:reduce){.nebula,.stars,.orbit,.sun-core,.splash{animation:none!important}}

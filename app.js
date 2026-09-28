@@ -23,6 +23,7 @@ const defaultData = {
   payments: []
 };
 
+document.body.classList.add("splash-open");
 let data = loadData();
 let viewedMonth = new Date(2026, 9, 1);
 const $ = id => document.getElementById(id);
@@ -174,7 +175,7 @@ $("clearSearch").addEventListener("click",()=>{$("searchInput").value="";renderP
 $("prevMonth").addEventListener("click",()=>{viewedMonth=new Date(viewedMonth.getFullYear(),viewedMonth.getMonth()-1,1);render()});
 $("nextMonth").addEventListener("click",()=>{viewedMonth=new Date(viewedMonth.getFullYear(),viewedMonth.getMonth()+1,1);render()});
 $("monthTitle").addEventListener("click",()=>{const now=new Date();viewedMonth=new Date(now.getFullYear(),now.getMonth(),1);render();toast("Returned to current month")});
-$("enterApp").onclick=()=>{$("splash").classList.add("hide");setTimeout(()=>$("splash")?.remove(),800)};
+$("enterApp").onclick=()=>{const splash=$("splash");splash.classList.add("hide");document.body.classList.remove("splash-open");setTimeout(()=>splash?.remove(),700)};
 $("homeBrand").onclick=()=>window.scrollTo({top:0,behavior:"smooth"}); $("homeTab").onclick=()=>window.scrollTo({top:0,behavior:"smooth"});
 $("addMember").onclick=()=>openMemberSheet();$("manageAccounts").onclick=()=>openAccountsSheet();$("settingsTab").onclick=()=>openAccountsSheet();
 document.querySelectorAll("[data-close]").forEach(btn=>btn.addEventListener("click",closeSheets));$("backdrop").addEventListener("click",closeSheets);
