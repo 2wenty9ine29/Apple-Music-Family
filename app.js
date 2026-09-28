@@ -148,12 +148,12 @@ function formatMonthList(keys){
   if(labels.length<=1)return labels[0]||"";if(labels.length===2)return `${labels[0]} and ${labels[1]}`;return `${labels.slice(0,-1).join(", ")} and ${labels.at(-1)}`;
 }
 function reminderMessage(group){
-  const {payer,people,months,total}=group;const monthText=formatMonthList(months);const lastLabels=[...new Set(people.map(lastPaidLabel))];
+  const {payer,people,months,total}=group;const monthText=formatMonthList(months);const lastLabels=[...new Set(people.map(m=>lastPaidLabel(m).replace(/ \d{4}$/,"")))];
   const lastText=lastLabels.length===1?lastLabels[0]:lastLabels.join(" and ");
   const extras="";
   const polite=payer.reminderTone==="female";
   if(polite)return `Hello ${niceName(payer.name)}, please the Apple Music is up. Last payment was for ${lastText}, so it’ll be ${money(total)} for ${monthText}${extras}.`;
-  return `${niceName(payer.name)}, the Apple Music is up. Last payment was for ${lastText}, so it’ll be ${money(total)} for ${monthText}${extras}.`;
+  return `Gee, the Apple Music is up. Last payment was for ${lastText}, so it’ll be ${money(total)} for ${monthText}${extras}.`;
 }
 function renderReminders(mk){
   const groups=data.members.filter(m=>!m.paidBy).map(m=>reminderGroup(m,mk)).filter(Boolean);

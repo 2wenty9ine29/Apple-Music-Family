@@ -1,6 +1,10 @@
-# Music Money v1.75
+# Music Money v1.76
 
 Clean, professional mobile-first Apple-style music subscription tracker.
+
+## v1.76 changes
+- WhatsApp reminders no longer include the year (e.g. "Last payment was for August").
+- Reminders for the boys start with "Gee," again; the ladies (Dorcas, Ama) keep "Hello Name, please…".
 
 ## v1.75 changes
 - New app icon: original winged-blade hero emblem in a gold hexagon on near-black (no letter).
