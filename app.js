@@ -71,6 +71,18 @@ function currentTotals(mk){
   data.payments.filter(p=>p.month===mk).forEach(p=>collected+=Number(p.amount||0));
   return {outstanding,collected,credit,paidCount,dueCount};
 }
+
+function initDuoGallery(){
+  const photos=[...document.querySelectorAll(".duo-photo")],dots=[...document.querySelectorAll(".duo-photo-dots i")];
+  if(!photos.length)return;
+  let index=0;
+  setInterval(()=>{
+    photos[index].classList.remove("is-active");dots[index]?.classList.remove("active");
+    index=(index+1)%photos.length;
+    photos[index].classList.add("is-active");dots[index]?.classList.add("active");
+  },4500);
+}
+
 function render(){
   const mk=monthKey(viewedMonth),t=currentTotals(mk);
   $("monthTitle").textContent=`${monthNames[viewedMonth.getMonth()]} ${viewedMonth.getFullYear()}`;
@@ -107,14 +119,15 @@ function formatMonthList(keys){
 function reminderMessage(group){
   const {payer,people,months,total}=group;const monthText=formatMonthList(months);const lastLabels=[...new Set(people.map(lastPaidLabel))];
   const lastText=lastLabels.length===1?lastLabels[0]:lastLabels.join(" and ");
-  const extras=people.length>1?` for you and ${people.slice(1).map(m=>m.name).join(" and ")}`:"";
+  const extras="";
   const polite=payer.reminderTone==="female";
   if(polite)return `Hello ${cleanName(payer.name)}, please the Apple Music is up. Last payment was for ${lastText}, so it’ll be ${money(total)} for ${monthText}${extras}.`;
   return `Gee, the Apple Music is up. Last payment was for ${lastText}, so it’ll be ${money(total)} for ${monthText}${extras}.`;
 }
 function renderReminders(mk){
   const groups=data.members.filter(m=>!m.paidBy).map(m=>reminderGroup(m,mk)).filter(Boolean);
-  $("reminderList").innerHTML=groups.length?groups.map(g=>{const message=reminderMessage(g);return `<article class="reminder-card"><div class="reminder-head"><div><div class="reminder-name">${escapeHtml(g.payer.name)}</div><div class="reminder-meta">Last paid · ${escapeHtml([...new Set(g.people.map(lastPaidLabel))].join(" · "))}</div></div><div class="reminder-amount">${money(g.total)}</div></div><div class="reminder-message">${escapeHtml(message)}</div><button class="whatsapp-button" data-whatsapp="${encodeURIComponent(message)}">Send on WhatsApp</button></article>`}).join(""):`<div class="empty">Everyone is up to date.</div>`;
+  $("reminderList").innerHTML=groups.length?groups.map((g,i)=>{const message=reminderMessage(g);const last=[...new Set(g.people.map(lastPaidLabel))].join(" · ");return `<article class="reminder-card ${i===0?'is-expanded':''}" data-reminder-card><button type="button" class="reminder-summary" data-reminder-toggle aria-expanded="${i===0?'true':'false'}"><div><div class="reminder-name">${escapeHtml(g.payer.name)}</div><div class="reminder-meta">Last paid · ${escapeHtml(last)}</div><div class="reminder-due">${escapeHtml(formatMonthList(g.months))}</div></div><div class="reminder-summary-right"><div class="reminder-amount">${money(g.total)}</div><span class="reminder-chevron">⌄</span></div></button><div class="reminder-details"><div class="reminder-message">${escapeHtml(message)}</div><button class="whatsapp-button" data-whatsapp="${encodeURIComponent(message)}">Send on WhatsApp</button></div></article>`}).join(""):`<div class="empty">Everyone is up to date.</div>`;
+  document.querySelectorAll("[data-reminder-toggle]").forEach(b=>b.onclick=()=>{const card=b.closest("[data-reminder-card]"),open=card.classList.toggle("is-expanded");b.setAttribute("aria-expanded",String(open))});
   document.querySelectorAll("[data-whatsapp]").forEach(b=>b.onclick=()=>{const message=decodeURIComponent(b.dataset.whatsapp);window.location.href=`https://wa.me/?text=${encodeURIComponent(message)}`});
 }
 function populateMemberSelects(){
@@ -158,3 +171,5 @@ document.querySelectorAll("[data-landing-target]").forEach(b=>b.onclick=()=>{con
 function toast(message){const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove("show"),1800)}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}function escapeAttr(s){return escapeHtml(s)}
 render();
+
+initDuoGallery();
