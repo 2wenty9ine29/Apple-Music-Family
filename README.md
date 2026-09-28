@@ -1,6 +1,10 @@
-# Music Money v1.5
+# 29 · Music Money v1.6
 
 Clean, professional mobile-first family subscription tracker.
+
+## v1.6 changes
+- New "29" wordmark as logo and app icon (icons/ folder, manifest, apple-touch-icon).
+- Rebuilt first page: Wallet-style pass with live paid ring, one button, dark mode.
 
 ## v1.5 changes
 - Replaced the planetary opening with a clean, Apple-style product landing screen.

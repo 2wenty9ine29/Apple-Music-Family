@@ -189,3 +189,12 @@ function toast(message){const el=$("toast");el.textContent=message;el.classList.
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
 function escapeAttr(s){return escapeHtml(s)}
 render();
+
+/* 29 intro: mirror live totals into the pass */
+(function(){
+  const t=$("outstandingTotal")?.textContent||"GH₵0",p=parseInt($("paidCount")?.textContent)||0,m=Number($("memberTotal")?.textContent)||0;
+  $("introAmount").textContent=t;$("introPaidNum").textContent=p;
+  $("introSub").textContent=`outstanding · ${p} of ${m} paid`;
+  const mt=$("monthTitle")?.textContent;if(mt)$("introMonth").textContent=mt;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{$("introRing").style.strokeDashoffset=m?100-(p/m)*100:100}));
+})();
