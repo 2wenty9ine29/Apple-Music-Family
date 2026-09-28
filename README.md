@@ -1,6 +1,9 @@
-# Music Money v1.76
+# Music Money v1.77
 
 Clean, professional mobile-first Apple-style music subscription tracker.
+
+## v1.77 changes
+- Icon files renamed to icons/hero-*.png so iPhone Safari cannot reuse an old cached icon when adding to the Home Screen.
 
 ## v1.76 changes
 - WhatsApp reminders no longer include the year (e.g. "Last payment was for August").
