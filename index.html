@@ -4,108 +4,109 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#f5f5f7" />
-  <meta name="apple-mobile-web-app-title" content="29" />
+  <meta name="apple-mobile-web-app-title" content="Music Money" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
   <link rel="manifest" href="manifest.webmanifest" />
-  <title>29 · Music Money</title>
+  <title>Music Money</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <section class="intro" id="splash" aria-label="29 Music Money">
-    <div class="intro-bar"><span class="logo" aria-label="29"><svg class="mark" viewBox="0 0 1063 750" aria-hidden="true"><path fill="currentColor" d="M33 585Q131 504 187.5 452.0Q244 400 283.0 343.0Q322 286 322 232Q322 191 303.0 168.0Q284 145 246 145Q208 145 186.5 173.5Q165 202 165 254H0Q2 169 36.5 112.0Q71 55 127.5 28.0Q184 1 253 1Q372 1 432.5 62.0Q493 123 493 221Q493 328 420.0 419.5Q347 511 234 598H504V737H2V610Q36 583 33 585ZM815 612Q868 612 890.0 565.0Q912 518 912 412Q890 443 852.0 460.0Q814 477 767 477Q703 477 653.0 450.5Q603 424 574.5 371.5Q546 319 546 244Q546 170 576.5 115.0Q607 60 663.5 30.0Q720 0 797 0Q945 0 1004.0 92.0Q1063 184 1063 363Q1063 493 1039.5 577.5Q1016 662 960.5 706.0Q905 750 809 750Q733 750 679.5 720.0Q626 690 597.5 641.0Q569 592 565 533H723Q738 612 815 612ZM898 247Q898 199 872.0 173.0Q846 147 802 147Q758 147 732.5 173.5Q707 200 707 246Q707 289 732.5 315.5Q758 342 806 342Q848 342 873.0 316.5Q898 291 898 247Z"/></svg></span></div>
-    <div class="intro-main">
-      <h1>Family payments, settled.</h1>
-      <p>See who has paid and who hasn't, at a glance.</p>
-      <div class="pass" aria-hidden="true">
-        <div class="pass-top"><span class="pass-logo"><svg class="mark" viewBox="0 0 1063 750" aria-hidden="true"><path fill="currentColor" d="M33 585Q131 504 187.5 452.0Q244 400 283.0 343.0Q322 286 322 232Q322 191 303.0 168.0Q284 145 246 145Q208 145 186.5 173.5Q165 202 165 254H0Q2 169 36.5 112.0Q71 55 127.5 28.0Q184 1 253 1Q372 1 432.5 62.0Q493 123 493 221Q493 328 420.0 419.5Q347 511 234 598H504V737H2V610Q36 583 33 585ZM815 612Q868 612 890.0 565.0Q912 518 912 412Q890 443 852.0 460.0Q814 477 767 477Q703 477 653.0 450.5Q603 424 574.5 371.5Q546 319 546 244Q546 170 576.5 115.0Q607 60 663.5 30.0Q720 0 797 0Q945 0 1004.0 92.0Q1063 184 1063 363Q1063 493 1039.5 577.5Q1016 662 960.5 706.0Q905 750 809 750Q733 750 679.5 720.0Q626 690 597.5 641.0Q569 592 565 533H723Q738 612 815 612ZM898 247Q898 199 872.0 173.0Q846 147 802 147Q758 147 732.5 173.5Q707 200 707 246Q707 289 732.5 315.5Q758 342 806 342Q848 342 873.0 316.5Q898 291 898 247Z"/></svg></span><span id="introMonth">October</span></div>
-        <div class="pass-row">
-          <div class="ring"><svg viewBox="0 0 100 100"><circle class="ring-bg" cx="50" cy="50" r="42"/><circle class="ring-fg" id="introRing" cx="50" cy="50" r="42" pathLength="100"/></svg><b id="introPaidNum">0</b></div>
-          <div><div class="pass-amount" id="introAmount">GH₵0</div><div class="pass-sub" id="introSub">outstanding</div></div>
-        </div>
-      </div>
-      <div class="intro-actions"><button class="enter-button" id="enterApp" type="button">Open</button></div>
-    </div>
-  </section>
-  <div class="app-shell">
-    <header class="topbar">
-      <div>
-        <div class="eyebrow">FAMILY MUSIC</div>
-        <h1>Money</h1>
-      </div>
-      <button class="brand-chip" id="homeBrand" aria-label="29 home"><svg class="mark" viewBox="0 0 1063 750" aria-hidden="true"><path fill="currentColor" d="M33 585Q131 504 187.5 452.0Q244 400 283.0 343.0Q322 286 322 232Q322 191 303.0 168.0Q284 145 246 145Q208 145 186.5 173.5Q165 202 165 254H0Q2 169 36.5 112.0Q71 55 127.5 28.0Q184 1 253 1Q372 1 432.5 62.0Q493 123 493 221Q493 328 420.0 419.5Q347 511 234 598H504V737H2V610Q36 583 33 585ZM815 612Q868 612 890.0 565.0Q912 518 912 412Q890 443 852.0 460.0Q814 477 767 477Q703 477 653.0 450.5Q603 424 574.5 371.5Q546 319 546 244Q546 170 576.5 115.0Q607 60 663.5 30.0Q720 0 797 0Q945 0 1004.0 92.0Q1063 184 1063 363Q1063 493 1039.5 577.5Q1016 662 960.5 706.0Q905 750 809 750Q733 750 679.5 720.0Q626 690 597.5 641.0Q569 592 565 533H723Q738 612 815 612ZM898 247Q898 199 872.0 173.0Q846 147 802 147Q758 147 732.5 173.5Q707 200 707 246Q707 289 732.5 315.5Q758 342 806 342Q848 342 873.0 316.5Q898 291 898 247Z"/></svg></button>
+<body class="splash-open">
+  <section class="landing" id="splash" aria-label="Music Money">
+    <header class="landing-nav">
+      <button class="wordmark" id="homeBrand" type="button">Music Money</button>
+      <nav><button type="button" data-landing-target="people">People</button><button type="button" data-landing-target="payments">Payments</button></nav>
     </header>
 
-    <main>
-      <section class="hero">
-        <div class="month-row">
-          <button class="month-arrow" id="prevMonth">‹</button>
-          <button class="month-title" id="monthTitle"></button>
-          <button class="month-arrow" id="nextMonth">›</button>
-        </div>
+    <div class="landing-hero">
+      <div class="hero-copy">
+        <p class="hero-kicker">Music Money</p>
+        <h1>Keep every payment in order.</h1>
+        <p class="hero-description">See who's paid, who hasn't, and when it's time to remind them.</p>
+        <button class="hero-open" id="enterApp" type="button">Open Music Money <span>→</span></button>
+      </div>
 
-        <div class="balance-card">
-          <div class="balance-label">OUTSTANDING</div>
-          <div class="balance-value" id="outstandingTotal">GH₵0</div>
-          <div class="balance-meta">
-            <span id="paidCount">0 paid</span>
-            <span id="dueCount">0 outstanding</span>
+      <div class="duo-stage" aria-label="iPhone Duo showing Music Money">
+        <div class="duo-shadow"></div>
+        <div class="duo-phone">
+          <div class="duo-left">
+            <div class="duo-screen-mini">
+              <span class="mini-time">9:41</span><span class="mini-dot"></span>
+              <div class="mini-label">Music Money</div><strong>October</strong>
+              <div class="mini-total" id="heroOutstanding">GH₵0</div><small>outstanding</small>
+              <div class="mini-lines"><i></i><i></i><i></i></div>
+            </div>
+          </div>
+          <div class="duo-hinge"></div>
+          <div class="duo-right">
+            <div class="duo-screen">
+              <div class="duo-status"><span>9:41</span><span>●</span></div>
+              <div class="duo-app-title">Music Money</div>
+              <div class="duo-month">October <span>›</span></div>
+              <div class="duo-balance"><small>Outstanding</small><strong id="heroBalance">GH₵0</strong><span id="heroPaid">0 paid</span></div>
+              <div class="duo-row"><span><b>Gee</b><small>Last paid · August</small></span><em>GH₵30</em></div>
+              <div class="duo-row"><span><b>Dorcas</b><small>Last paid · August</small></span><em>GH₵30</em></div>
+              <div class="duo-row"><span><b>Ama</b><small>Last paid · August</small></span><em>GH₵60</em></div>
+              <div class="duo-bottom"><span>See who's paid</span><span>Remind →</span></div>
+            </div>
           </div>
         </div>
-      </section>
+        <p class="duo-caption">iPhone Duo · Music Money</p>
+      </div>
+    </div>
 
-      <section class="quick-stats">
-        <div class="stat">
-          <span>Collected</span>
-          <strong id="collectedTotal">GH₵0</strong>
-        </div>
-        <div class="stat">
-          <span>Credit held</span>
-          <strong id="creditTotal">GH₵0</strong>
-        </div>
-        <div class="stat">
-          <span>Members</span>
-          <strong id="memberTotal">0</strong>
-        </div>
-      </section>
+    <div class="feature-scroll" id="landingFeatures">
+      <article class="feature feature-white" id="feature-paid">
+        <div><h2>See who's paid.</h2><button type="button" class="feature-link" data-landing-target="people">View payments →</button></div>
+        <div class="feature-visual paid-visual"><span class="feature-count">8</span><span>paid</span><div class="check-list"><i>Gee <b>Paid</b></i><i>Dorcas <b>Paid</b></i><i>Ama <b>Due</b></i></div></div>
+      </article>
+      <article class="feature feature-grey" id="feature-remind">
+        <div><h2>Remind in one tap.</h2><button type="button" class="feature-link" id="landingReminder">Create reminder →</button></div>
+        <div class="feature-visual message-visual"><div class="message-bubble"><small>Music Money</small><p>Hello Dorcas, please the Apple Music is up. Last payment was for August, so it’ll be GH₵30 for September and October.</p><span>Send on WhatsApp →</span></div></div>
+      </article>
+      <article class="feature feature-white" id="feature-history">
+        <div><h2>Every payment, on record.</h2><button type="button" class="feature-link" data-landing-target="payments">View history →</button></div>
+        <div class="feature-visual history-visual"><i><span>August</span><b>GH₵120</b></i><i><span>September</span><b>GH₵180</b></i><i><span>October</span><b>GH₵90</b></i></div>
+      </article>
+    </div>
+  </section>
 
-      <section class="section">
-        <div class="section-heading">
-          <h2>Accounts</h2>
-          <button class="text-button" id="manageAccounts">Manage</button>
-        </div>
-        <div id="accountsList" class="account-list"></div>
+  <div class="app-shell" id="appShell">
+    <header class="topbar">
+      <button class="app-title" id="appHome" type="button">Music Money</button>
+      <nav class="top-links"><button type="button" data-tab="people">People</button><button type="button" data-tab="payments">Payments</button></nav>
+    </header>
+    <main>
+      <section class="hero app-section" id="overviewSection">
+        <div class="month-row"><button class="month-arrow" id="prevMonth">‹</button><button class="month-title" id="monthTitle"></button><button class="month-arrow" id="nextMonth">›</button></div>
+        <div class="balance-card"><div class="balance-label">Outstanding</div><div class="balance-value" id="outstandingTotal">GH₵0</div><div class="balance-meta"><span id="paidCount">0 paid</span><span id="dueCount">0 outstanding</span></div></div>
       </section>
+      <section class="quick-stats"><div class="stat"><span>Collected</span><strong id="collectedTotal">GH₵0</strong></div><div class="stat"><span>Credit held</span><strong id="creditTotal">GH₵0</strong></div><div class="stat"><span>Members</span><strong id="memberTotal">0</strong></div></section>
 
-      <section class="section">
-        <div class="section-heading">
-          <h2>People</h2>
-          <button class="text-button" id="addMember">Add</button>
-        </div>
-        <div class="marker-legend"><span>🪽 Aug</span><span>🦉 Oct</span><span>🛩️ Apr</span><span>🛁 Jan</span><span>🐍 Sep</span><span>🎰 Jul</span></div>
-        <label class="search">
-          <span>⌕</span>
-          <input id="searchInput" type="search" placeholder="Search members" autocomplete="off" />
-        </label>
+      <section class="section app-section" id="peopleSection">
+        <div class="section-heading"><h2>People</h2><button class="text-button" id="addMember">Add</button></div>
+        <label class="search"><span>⌕</span><input id="searchInput" type="search" placeholder="Search members" autocomplete="off" /></label>
         <div id="peopleList" class="people-list"></div>
       </section>
 
-      <section class="section">
-        <div class="section-heading">
-          <h2>Recent payments</h2>
-          <button class="text-button" id="clearSearch">Clear</button>
-        </div>
+      <section class="section app-section" id="remindersSection">
+        <div class="section-heading"><h2>Reminders</h2><span class="section-note">WhatsApp</span></div>
+        <div id="reminderList" class="reminder-list"></div>
+      </section>
+
+      <section class="section app-section" id="paymentsSection">
+        <div class="section-heading"><h2>Payments</h2><button class="text-button" id="clearSearch">Clear</button></div>
         <div id="paymentsList" class="payments-list"></div>
       </section>
-    </main>
 
+      <section class="section app-section" id="accountsSection">
+        <div class="section-heading"><h2>Accounts</h2><button class="text-button" id="manageAccounts">Manage</button></div>
+        <div id="accountsList" class="account-list"></div>
+      </section>
+    </main>
     <nav class="tabbar">
-      <button class="tab active" data-tab="overview">Overview</button>
-      <button class="tab" data-tab="people">People</button>
-      <button class="tab brand-tab" id="homeTab" aria-label="Home"><svg class="mark" viewBox="0 0 1063 750" aria-hidden="true"><path fill="currentColor" d="M33 585Q131 504 187.5 452.0Q244 400 283.0 343.0Q322 286 322 232Q322 191 303.0 168.0Q284 145 246 145Q208 145 186.5 173.5Q165 202 165 254H0Q2 169 36.5 112.0Q71 55 127.5 28.0Q184 1 253 1Q372 1 432.5 62.0Q493 123 493 221Q493 328 420.0 419.5Q347 511 234 598H504V737H2V610Q36 583 33 585ZM815 612Q868 612 890.0 565.0Q912 518 912 412Q890 443 852.0 460.0Q814 477 767 477Q703 477 653.0 450.5Q603 424 574.5 371.5Q546 319 546 244Q546 170 576.5 115.0Q607 60 663.5 30.0Q720 0 797 0Q945 0 1004.0 92.0Q1063 184 1063 363Q1063 493 1039.5 577.5Q1016 662 960.5 706.0Q905 750 809 750Q733 750 679.5 720.0Q626 690 597.5 641.0Q569 592 565 533H723Q738 612 815 612ZM898 247Q898 199 872.0 173.0Q846 147 802 147Q758 147 732.5 173.5Q707 200 707 246Q707 289 732.5 315.5Q758 342 806 342Q848 342 873.0 316.5Q898 291 898 247Z"/></svg></button>
-      <button class="tab" data-tab="payments">Payments</button>
-      <button class="tab" id="settingsTab">Settings</button>
+      <button class="tab active" data-tab="overview">Overview</button><button class="tab" data-tab="people">People</button><button class="tab" data-tab="reminders">Reminders</button><button class="tab" data-tab="payments">Payments</button><button class="tab" id="settingsTab">Settings</button>
     </nav>
   </div>
 
@@ -196,5 +197,6 @@
 
   <div class="toast" id="toast"></div>
   <script src="app.js"></script>
+
 </body>
 </html>
