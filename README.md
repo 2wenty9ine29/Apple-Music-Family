@@ -1,6 +1,11 @@
-# Music Money v2.0
+# Music Money v2.0.2
 
 Clean, professional mobile-first Apple-style music subscription tracker.
+
+## v2.0.2 changes
+- Fixed landing page drifting sideways / looking zoomed-out: the Duo mockup, its shadow and tilt animation no longer overflow the screen width.
+- Added text-size-adjust so iOS doesn't inflate fonts; hero and feature headlines now scale fluidly with clamp().
+- Switched 100vh sections to 100svh so Safari's toolbar doesn't cause jumps; disabled the float animation on phones.
 
 ## v2.0 changes
 - Fixed iPhone Home Screen icon handling using a single explicit 180px Apple touch icon and matching PWA manifest icons, following the proven working setup used by the reference PWA.

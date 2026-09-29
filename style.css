@@ -42,3 +42,27 @@ body[data-view="reminders"] .quick-stats,body[data-view="payments"] .quick-stats
 /* V1.71 — mark paid + backup */
 .mark-paid-button{margin-top:10px}
 #accountsSheet #exportData,#accountsSheet #importData{margin-top:10px}
+
+/* V2.0.2 — mobile stability: no sideways drift, no zoom-text inflation, no scroll jumps */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;overflow-x:hidden;max-width:100%}
+body{max-width:100%;overscroll-behavior-x:none}
+.landing,.app-shell{max-width:100%;overflow-x:clip}
+.landing{min-height:100vh;min-height:100svh}
+.landing-hero{min-height:calc(100vh - 58px);min-height:calc(100svh - 58px)}
+.feature{min-height:74vh;min-height:74svh}
+.hero-copy,.hero-copy h1,.feature h2{min-width:0;overflow-wrap:break-word}
+.duo-stage{max-width:100%;overflow:hidden;padding-bottom:28px}
+.duo-shadow{width:min(480px,80%)}
+.duo-phone{max-width:100%;will-change:transform;backface-visibility:hidden}
+.duo-photo{will-change:opacity}
+@media(max-width:800px){
+  .duo-phone{width:min(650px,92%);animation:none}
+  .feature{min-height:78vh;min-height:78svh}
+}
+@media(max-width:520px){
+  .hero-copy h1{font-size:clamp(38px,13vw,56px);letter-spacing:-.05em}
+  .feature h2{font-size:clamp(34px,11vw,44px);letter-spacing:-.05em}
+  .duo-phone{width:92%}
+  .feature{min-height:70vh;min-height:70svh}
+  .landing-hero{padding-left:20px;padding-right:20px}
+}
