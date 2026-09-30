@@ -9,11 +9,13 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <link rel="apple-touch-icon" href="icon-180.png" />
   <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
-  <link rel="manifest" href="manifest.webmanifest?v=201" />
+  <link rel="manifest" href="manifest.webmanifest?v=203" />
   <title>Music Money</title>
-  <link rel="stylesheet" href="style.css?v=202" />
+  <script>try{if(localStorage.getItem("music-money-lock"))document.documentElement.classList.add("is-locked")}catch(e){}</script>
+  <link rel="stylesheet" href="style.css?v=203" />
 </head>
 <body class="splash-open">
+  <div id="lockScreen" aria-live="polite"><div class="lock-card"><div class="lock-icon">🔒</div><h2>Music Money</h2><p id="lockMsg">Locked</p><button id="lockRetry" type="button" class="save-button">Unlock with Face ID</button><button id="lockOff" type="button" class="lock-off" hidden>Turn off lock</button></div></div>
   <section class="landing" id="splash" aria-label="Music Money">
     <header class="landing-nav">
       <button class="wordmark" id="homeBrand" type="button">Music Money</button>
@@ -174,6 +176,9 @@
       <label>Monthly price
         <input id="memberPrice" type="number" min="0" step="0.01" inputmode="decimal" required />
       </label>
+      <label>WhatsApp number
+        <input id="memberPhone" type="tel" inputmode="tel" maxlength="20" placeholder="024 000 0000" />
+      </label>
       <label>Payment marker
         <select id="memberMarker"><option value="">No marker</option><option value="🪽">🪽 — August</option><option value="🦉">🦉 — October</option><option value="🛩️">🛩️ — April</option><option value="🛁">🛁 — January</option><option value="🐍">🐍 — September</option><option value="🎰">🎰 — July</option></select>
       </label>
@@ -195,6 +200,10 @@
     <div class="eyebrow history-label">BACKUP</div>
     <button class="save-button secondary" id="exportData">Export backup</button>
     <button class="save-button secondary" id="importData">Import backup</button>
+    <p class="sub backup-line" id="backupLine"></p>
+    <div class="eyebrow history-label">SECURITY</div>
+    <button class="save-button secondary" id="lockToggle" type="button">Face ID lock</button>
+    <p class="sub backup-line" id="versionLine"></p>
     <input type="file" id="importFile" accept="application/json,.json" hidden />
   </section>
 
@@ -211,7 +220,7 @@
   </section>
 
   <div class="toast" id="toast"></div>
-  <script src="app.js?v=202"></script>
+  <script src="app.js?v=203"></script>
 
 </body>
 </html>

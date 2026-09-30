@@ -66,3 +66,19 @@ body{max-width:100%;overscroll-behavior-x:none}
   .feature{min-height:70vh;min-height:70svh}
   .landing-hero{padding-left:20px;padding-right:20px}
 }
+
+/* v2.0.3 */
+.duo-photo-frame{background:linear-gradient(135deg,#1d2b3a,#5b3f7a 55%,#c4785a)}
+.person-row{cursor:pointer}
+.debt-badge .quickpay{display:inline-block;margin-top:6px;padding:4px 10px;border-radius:999px;background:#1d1d1f;color:#fff;font-size:11px;font-weight:600}
+.toast.has-action{pointer-events:auto;display:flex;align-items:center;gap:14px;padding:11px 8px 11px 16px;overflow:hidden;white-space:nowrap}
+.toast.has-action button{border:0;background:rgba(255,255,255,.16);color:#fff;font-weight:600;font-size:13px;padding:6px 12px;border-radius:999px}
+.toast.has-action::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:100%;background:rgba(255,255,255,.55);transform-origin:left;transform:scaleX(1)}
+.toast.has-action.run::after{animation:toastBar var(--toast-ms,2000ms) linear forwards}
+@keyframes toastBar{to{transform:scaleX(0)}}
+#lockScreen{display:none;position:fixed;inset:0;z-index:100;background:#fff;align-items:center;justify-content:center;padding:24px}
+.is-locked #lockScreen{display:flex}
+.lock-card{text-align:center;display:grid;gap:14px;width:min(320px,100%)}
+.lock-icon{font-size:44px}.lock-card h2{margin:0;font-size:26px;letter-spacing:-.04em}.lock-card p{margin:0;color:var(--muted)}
+.lock-off{border:0;background:none;color:var(--muted);font-size:13px}
+.backup-line{margin:10px 0 0;text-align:center}

@@ -19,7 +19,7 @@ document.addEventListener("click",e=>{
   if(t.id==="landingReminder")return goView("reminders");
 });
 applyView(location.hash.slice(1));
-const APP_VERSION = "2.0";
+const APP_VERSION = "2.0.3";
 const KEY = "music-money-v1"; // Keep unchanged so v2.0 preserves all existing user data.
 const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const markerByMonth = {January:"🛁",February:"",March:"",April:"🛩️",May:"",June:"",July:"🎰",August:"🪽",September:"🐍",October:"🦉",November:"",December:""};
@@ -45,7 +45,9 @@ const money=n=>`GH₵${Number(n||0).toLocaleString("en-GH",{minimumFractionDigit
 const monthKey=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
 const uid=p=>`${p}-${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
 const monthIndex=(year,month0)=>Number(year)*12+Number(month0);
-let viewedMonth=new Date(2026,9,1);
+const _now=new Date();const todayMonth=()=>new Date(_now.getFullYear(),_now.getMonth(),1);let viewedMonth=todayMonth();
+const PHONES={m1:"0257677310",m2:"0247065885",m3:"",m4:"0554447427",m5:"0247554798",m6:"0509045690",m7:"0205987053",m8:"0205987053",m9:"0509691179",m10:"0506607231",m11:"0505408461",m12:"0553691093"};
+const waNumber=p=>{let d=String(p||"").replace(/\D/g,"");if(d.startsWith("0"))d="233"+d.slice(1);return d};
 
 function loadData(){
   try{
@@ -66,6 +68,7 @@ function loadData(){
         m.markerYear=Number(m.markerYear||2026);
         m.monthsPaid=Math.max(1,Number(m.monthsPaid||1));
         m.reminderTone=m.reminderTone||d.reminderTone||"male";
+        m.phone=m.phone||PHONES[m.id]||"";
         m.paysFor=Array.isArray(m.paysFor)?m.paysFor:(d.paysFor||[]);
       });
       return merged;
@@ -129,8 +132,9 @@ function renderAccounts(mk){
 }
 function renderPeople(mk,filter=null){
   const q=$("searchInput").value.trim().toLowerCase(),accounts=filter?data.accounts.filter(a=>a.id===filter):data.accounts;
-  $("peopleList").innerHTML=accounts.map(a=>{const people=data.members.filter(m=>m.accountId===a.id&&(!q||m.name.toLowerCase().includes(q)));if(!people.length)return "";return `<div class="account-people"><div class="people-group-title"><span>${escapeHtml(a.name)}</span><small>${people.length} members</small></div>${people.map(m=>{const debt=totalDebtForMember(m,mk),settled=debt<=0;return `<button class="person-row ${settled?"is-settled":""}" data-member="${m.id}"><div class="person-main"><h3 class="person-name">${escapeHtml(m.name)}</h3><div class="sub">Last paid · ${escapeHtml(lastPaidLabel(m))}</div></div><div class="debt-badge"><small>${settled?"Settled":"Outstanding"}</small><strong>${money(debt)}</strong></div><div class="row-chevron">›</div></button>`}).join("")}</div>`}).join("")||`<div class="empty">No members found.</div>`;
+  $("peopleList").innerHTML=accounts.map(a=>{const people=data.members.filter(m=>m.accountId===a.id&&(!q||m.name.toLowerCase().includes(q)));if(!people.length)return "";return `<div class="account-people"><div class="people-group-title"><span>${escapeHtml(a.name)}</span><small>${people.length} members</small></div>${people.map(m=>{const debt=totalDebtForMember(m,mk),settled=debt<=0;return `<div class="person-row ${settled?"is-settled":""}" data-member="${m.id}" role="button" tabindex="0"><div class="person-main"><h3 class="person-name">${escapeHtml(m.name)}</h3><div class="sub">Last paid · ${escapeHtml(lastPaidLabel(m))}</div></div><div class="debt-badge"><small>${settled?"Settled":"Outstanding"}</small><strong>${money(debt)}</strong>${settled?"":`<span class="quickpay" data-quickpay="${m.id}">Mark paid</span>`}</div><div class="row-chevron">›</div></div>`}).join("")}</div>`}).join("")||`<div class="empty">No members found.</div>`;
   document.querySelectorAll("[data-member]").forEach(b=>b.onclick=()=>openMemberDetail(b.dataset.member));
+  document.querySelectorAll("[data-quickpay]").forEach(b=>b.onclick=e=>{e.stopPropagation();markGroupPaid(b.dataset.quickpay)});
 }
 function renderPayments(mk){
   const payments=data.payments.filter(p=>p.month===mk).sort((a,b)=>(b.date||"").localeCompare(a.date||""));
@@ -158,10 +162,10 @@ function reminderMessage(group){
 }
 function renderReminders(mk){
   const groups=data.members.filter(m=>!m.paidBy).map(m=>reminderGroup(m,mk)).filter(Boolean);
-  $("reminderList").innerHTML=groups.length?groups.map((g,i)=>{const message=reminderMessage(g);const last=[...new Set(g.people.map(lastPaidLabel))].join(" · ");return `<article class="reminder-card" data-reminder-card><button type="button" class="reminder-summary" data-reminder-toggle aria-expanded="false"><div><div class="reminder-name">${escapeHtml(g.payer.name)}</div><div class="reminder-meta">Last paid · ${escapeHtml(last)}</div><div class="reminder-due">${escapeHtml(formatMonthList(g.months))}</div></div><div class="reminder-summary-right"><div class="reminder-amount">${money(g.total)}</div><span class="reminder-chevron">⌄</span></div></button><div class="reminder-details"><div class="reminder-message">${escapeHtml(message)}</div><button class="whatsapp-button" data-whatsapp="${encodeURIComponent(message)}">Send on WhatsApp</button><button class="save-button secondary mark-paid-button" data-markpaid="${g.payer.id}">Mark paid</button></div></article>`}).join(""):`<div class="empty">Everyone is up to date.</div>`;
+  $("reminderList").innerHTML=groups.length?groups.map((g,i)=>{const message=reminderMessage(g);const last=[...new Set(g.people.map(lastPaidLabel))].join(" · ");return `<article class="reminder-card" data-reminder-card><button type="button" class="reminder-summary" data-reminder-toggle aria-expanded="false"><div><div class="reminder-name">${escapeHtml(g.payer.name)}</div><div class="reminder-meta">Last paid · ${escapeHtml(last)}</div><div class="reminder-due">${escapeHtml(formatMonthList(g.months))}</div></div><div class="reminder-summary-right"><div class="reminder-amount">${money(g.total)}</div><span class="reminder-chevron">⌄</span></div></button><div class="reminder-details"><div class="reminder-message">${escapeHtml(message)}</div><button class="whatsapp-button" data-whatsapp="${encodeURIComponent(message)}" data-phone="${escapeAttr(g.payer.phone||"")}">Send on WhatsApp</button><button class="save-button secondary mark-paid-button" data-markpaid="${g.payer.id}">Mark paid</button></div></article>`}).join(""):`<div class="empty">Everyone is up to date.</div>`;
   document.querySelectorAll("[data-reminder-toggle]").forEach(b=>b.onclick=()=>{const card=b.closest("[data-reminder-card]"),open=card.classList.toggle("is-expanded");b.setAttribute("aria-expanded",String(open))});
   document.querySelectorAll("[data-markpaid]").forEach(b=>b.onclick=()=>markGroupPaid(b.dataset.markpaid));
-  document.querySelectorAll("[data-whatsapp]").forEach(b=>b.onclick=()=>{const message=decodeURIComponent(b.dataset.whatsapp);window.location.href=`https://wa.me/?text=${encodeURIComponent(message)}`});
+  document.querySelectorAll("[data-whatsapp]").forEach(b=>b.onclick=()=>{const message=decodeURIComponent(b.dataset.whatsapp);const n=waNumber(b.dataset.phone);window.location.href=`https://wa.me/${n}?text=${encodeURIComponent(message)}`});
 }
 function populateMemberSelects(){
   $("paymentMember").innerHTML=data.members.map(m=>`<option value="${m.id}">${escapeHtml(m.name)}</option>`).join("");
@@ -171,7 +175,7 @@ function openSheet(id){$("backdrop").classList.add("show");$(id).classList.add("
 function closeSheets(){document.querySelectorAll(".sheet.show").forEach(s=>{s.classList.remove("show");s.setAttribute("aria-hidden","true")});$("backdrop").classList.remove("show")}
 function openPaymentSheet(memberId=null){$("paymentForm").reset();populateMemberSelects();$("paymentMember").value=memberId||data.members[0]?.id||"";$("paymentMonth").value=monthKey(viewedMonth);$("paymentDate").value=new Date().toISOString().slice(0,10);$("paymentMonthsPaid").value=1;$("paymentAmount").readOnly=true;updatePaymentAmount();openSheet("paymentSheet")}
 function updatePaymentAmount(){const m=member($("paymentMember").value),n=Number($("paymentMonthsPaid").value||1);$("paymentAmount").value=(Number(m?.monthlyPrice||15)*n).toFixed(2)}
-function openMemberSheet(id=null){$("memberForm").reset();$("memberForm").dataset.editing=id||"";$("memberSheetTitle").textContent=id?"Edit member":"Add member";populateMemberSelects();if(id){const m=member(id);$("memberName").value=m.name;$("memberAccount").value=m.accountId;$("memberPrice").value=m.monthlyPrice;$("memberMarker").value=m.marker||""}else $("memberPrice").value=15;openSheet("memberSheet")}
+function openMemberSheet(id=null){$("memberForm").reset();$("memberForm").dataset.editing=id||"";$("memberSheetTitle").textContent=id?"Edit member":"Add member";populateMemberSelects();if(id){const m=member(id);$("memberName").value=m.name;$("memberAccount").value=m.accountId;$("memberPrice").value=m.monthlyPrice;$("memberMarker").value=m.marker||"";$("memberPhone").value=m.phone||""}else $("memberPrice").value=15;openSheet("memberSheet")}
 function openAccountsSheet(){renderAccountEditor();openSheet("accountsSheet")}
 function renderAccountEditor(){
   $("accountEditor").innerHTML=data.accounts.map(a=>`<div class="editor-row"><input data-account-name="${a.id}" value="${escapeAttr(a.name)}" maxlength="40"><button class="danger" data-delete-account="${a.id}">Delete</button></div>`).join("");
@@ -195,34 +199,34 @@ function cleanName(name){return String(name||"").replace(/[-_].*$/g,"").trim().r
 function scrollToId(id){$(id)?.scrollIntoView({behavior:"smooth",block:"start"})}
 
 $("paymentMember").addEventListener("change",updatePaymentAmount);$("paymentMonthsPaid").addEventListener("change",updatePaymentAmount);
-$("paymentForm").addEventListener("submit",e=>{e.preventDefault();const memberId=$("paymentMember").value,amount=Number($("paymentAmount").value),months=Number($("paymentMonthsPaid").value||1);if(!memberId||amount<=0)return;const m=member(memberId);data.payments.push({id:uid("pay"),memberId,amount,month:$("paymentMonth").value,date:$("paymentDate").value,monthsPaid:months,note:$("paymentNote").value.trim()});m.monthsPaid=months;saveData();closeSheets();viewedMonth=new Date(Number($("paymentMonth").value.slice(0,4)),Number($("paymentMonth").value.slice(5,7))-1,1);render();toast(`${money(amount)} recorded for ${m.name}`)});
-$("memberForm").addEventListener("submit",e=>{e.preventDefault();const editing=$("memberForm").dataset.editing,payload={name:$("memberName").value.trim().toUpperCase(),accountId:$("memberAccount").value,monthlyPrice:Number($("memberPrice").value),marker:$("memberMarker").value};if(!payload.name||payload.monthlyPrice<0)return;if(editing)Object.assign(member(editing),payload);else data.members.push({id:uid("member"),...payload,markerMonth:"October",markerYear:2026,monthsPaid:1,reminderTone:"male",paysFor:[]});saveData();closeSheets();render();toast(editing?"Member updated":"Member added")});
+$("paymentForm").addEventListener("submit",e=>{e.preventDefault();const memberId=$("paymentMember").value,amount=Number($("paymentAmount").value),months=Number($("paymentMonthsPaid").value||1);if(!memberId||amount<=0)return;const m=member(memberId);const snap=JSON.stringify(data);data.payments.push({id:uid("pay"),memberId,amount,month:$("paymentMonth").value,date:$("paymentDate").value,monthsPaid:months,note:$("paymentNote").value.trim()});m.monthsPaid=months;saveData();closeSheets();viewedMonth=new Date(Number($("paymentMonth").value.slice(0,4)),Number($("paymentMonth").value.slice(5,7))-1,1);render();toastAction(`${money(amount)} recorded for ${m.name}`,"Undo",()=>restoreSnap(snap),2000)});
+$("memberForm").addEventListener("submit",e=>{e.preventDefault();const editing=$("memberForm").dataset.editing,payload={name:$("memberName").value.trim().toUpperCase(),accountId:$("memberAccount").value,monthlyPrice:Number($("memberPrice").value),marker:$("memberMarker").value,phone:$("memberPhone").value.trim()};if(!payload.name||payload.monthlyPrice<0)return;if(editing)Object.assign(member(editing),payload);else data.members.push({id:uid("member"),...payload,markerMonth:"October",markerYear:2026,monthsPaid:1,reminderTone:"male",paysFor:[]});saveData();closeSheets();render();toast(editing?"Member updated":"Member added")});
 $("addAccountButton").onclick=()=>{data.accounts.push({id:uid("account"),name:`Account ${data.accounts.length+1}`,monthlyDefault:15});saveData();renderAccountEditor();render()};
 $("searchInput").addEventListener("input",()=>renderPeople(monthKey(viewedMonth)));$("clearSearch").onclick=()=>{$("searchInput").value="";renderPeople(monthKey(viewedMonth));$("searchInput").focus()};
-$("prevMonth").onclick=()=>{viewedMonth=new Date(viewedMonth.getFullYear(),viewedMonth.getMonth()-1,1);render()};$("nextMonth").onclick=()=>{viewedMonth=new Date(viewedMonth.getFullYear(),viewedMonth.getMonth()+1,1);render()};$("monthTitle").onclick=()=>{viewedMonth=new Date(2026,9,1);render()};
+$("prevMonth").onclick=()=>{viewedMonth=new Date(viewedMonth.getFullYear(),viewedMonth.getMonth()-1,1);render()};$("nextMonth").onclick=()=>{viewedMonth=new Date(viewedMonth.getFullYear(),viewedMonth.getMonth()+1,1);render()};$("monthTitle").onclick=()=>{viewedMonth=todayMonth();render()};
 $("addMember").onclick=()=>openMemberSheet();$("manageAccounts").onclick=()=>openAccountsSheet();$("settingsTab").onclick=()=>openAccountsSheet();
 document.querySelectorAll("[data-close]").forEach(b=>b.onclick=closeSheets);$("backdrop").onclick=closeSheets;
 
 function markGroupPaid(payerId){
   const mk=monthKey(viewedMonth),payer=member(payerId);if(!payer)return;
   const group=reminderGroup(payer,mk);if(!group)return toast("Already up to date");
-  if(!confirm(`Mark ${group.people.map(p=>cleanName(p.name)||p.name).join(" & ")} as paid through ${monthLabelFromKey(mk)}? Total ${money(group.total)}.`))return;
+  const snap=JSON.stringify(data);
   const [y,mo]=mk.split("-").map(Number),name=monthNames[mo-1],today=new Date().toISOString().slice(0,10);
   group.people.forEach(m=>{
     const n=unpaidMonthsFor(m,mk).length;if(!n)return;
     data.payments.push({id:uid("pay"),memberId:m.id,amount:n*Number(m.monthlyPrice||15),month:mk,date:today,monthsPaid:n,note:"Marked paid from reminder"});
     m.markerMonth=name;m.markerYear=y;m.marker=markerForMonth(name);m.monthsPaid=n;
   });
-  saveData();render();toast(`Marked paid · ${money(group.total)}`);
+  saveData();render();toastAction(`Marked paid · ${money(group.total)}`,"Undo",()=>restoreSnap(snap),2000);
 }
 function backupFileName(){return `music-money-backup-${new Date().toISOString().slice(0,10)}.json`}
 async function exportBackup(){
   const payload=JSON.stringify({app:"music-money",storageKey:KEY,exportedAt:new Date().toISOString(),data},null,2);
   const file=new File([payload],backupFileName(),{type:"application/json"});
   try{
-    if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"Music Money backup"});return toast("Backup ready")}
+    if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"Music Money backup"});markBackedUp();return toast("Backup ready")}
   }catch(e){if(e&&e.name==="AbortError")return}
-  const url=URL.createObjectURL(file),a=document.createElement("a");a.href=url;a.download=file.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);toast("Backup downloaded");
+  const url=URL.createObjectURL(file),a=document.createElement("a");a.href=url;a.download=file.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);markBackedUp();toast("Backup downloaded");
 }
 function validBackup(d){
   return d&&Array.isArray(d.accounts)&&Array.isArray(d.members)&&Array.isArray(d.payments)&&d.accounts.every(a=>a&&a.id&&a.name!==undefined)&&d.members.every(m=>m&&m.id&&m.name&&m.accountId);
@@ -246,7 +250,77 @@ function importBackup(file){
 $("exportData").onclick=exportBackup;
 $("importData").onclick=()=>$("importFile").click();
 $("importFile").onchange=e=>{const f=e.target.files&&e.target.files[0];if(f)importBackup(f);e.target.value=""};
-function toast(message){const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove("show"),1800)}
+function toast(message){const el=$("toast");el.classList.remove("has-action");el.textContent=message;el.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove("show"),1800)}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}function escapeAttr(s){return escapeHtml(s)}
+
+
 try{render()}catch(e){console.error("Music Money render",e)}
 initDuoGallery();
+
+/* ---------- v2.0.3: toast with action / undo ---------- */
+function toastAction(message,label,fn,ms=2000){
+  const el=$("toast");clearTimeout(window.__toast);
+  el.innerHTML=`<span></span><button type="button">${label}</button>`;el.firstChild.textContent=message;
+  el.classList.add("has-action","show");el.style.setProperty("--toast-ms",ms+"ms");
+  el.classList.remove("run");void el.offsetWidth;el.classList.add("run");
+  el.querySelector("button").onclick=()=>{el.classList.remove("show");clearTimeout(window.__toast);fn()};
+  window.__toast=setTimeout(()=>el.classList.remove("show"),ms);
+}
+function restoreSnap(snap){data=JSON.parse(snap);saveData();render();toast("Undone")}
+
+/* ---------- v2.0.3: backup tracking + nudge ---------- */
+const BACKUP_KEY="music-money-last-backup";
+function markBackedUp(){try{localStorage.setItem(BACKUP_KEY,String(Date.now()))}catch(e){}updateBackupLine()}
+function updateBackupLine(){
+  const t=Number(localStorage.getItem(BACKUP_KEY)||0),el=$("backupLine");if(!el)return;
+  el.textContent=t?`Last backup: ${new Date(t).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})}`:"No backup yet";
+}
+updateBackupLine();
+setTimeout(()=>{const t=Number(localStorage.getItem(BACKUP_KEY)||0);if(!document.documentElement.classList.contains("is-locked")&&Date.now()-t>14*864e5)toastAction("Time to back up your data","Back up",exportBackup,6000)},3500);
+
+/* ---------- v2.0.3: Face ID lock (WebAuthn platform authenticator) ---------- */
+const LOCK_KEY="music-money-lock";
+const b64=buf=>btoa(String.fromCharCode(...new Uint8Array(buf)));
+const unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+const rnd=n=>crypto.getRandomValues(new Uint8Array(n));
+const lockSupported=()=>!!(window.PublicKeyCredential&&navigator.credentials&&window.isSecureContext);
+async function enableLock(){
+  const cred=await navigator.credentials.create({publicKey:{challenge:rnd(32),rp:{name:"Music Money",id:location.hostname},user:{id:rnd(16),name:"owner",displayName:"Music Money"},pubKeyCredParams:[{type:"public-key",alg:-7},{type:"public-key",alg:-257}],authenticatorSelection:{authenticatorAttachment:"platform",userVerification:"required"},timeout:60000}});
+  localStorage.setItem(LOCK_KEY,b64(cred.rawId));
+}
+async function verifyLock(){
+  const id=localStorage.getItem(LOCK_KEY);if(!id)return true;
+  try{await navigator.credentials.get({publicKey:{challenge:rnd(32),rpId:location.hostname,allowCredentials:[{type:"public-key",id:unb64(id)}],userVerification:"required",timeout:60000}});return true}catch(e){return false}
+}
+function setLocked(on){document.documentElement.classList.toggle("is-locked",on)}
+async function tryUnlock(){
+  const ok=await verifyLock();
+  if(ok){setLocked(false);$("lockOff").hidden=true}else{$("lockMsg").textContent="Couldn’t verify. Try again.";$("lockOff").hidden=false}
+}
+function updateLockButton(){
+  const b=$("lockToggle");if(!b)return;
+  if(!lockSupported()){b.textContent="Face ID lock · Not supported here";b.disabled=true;return}
+  b.textContent=localStorage.getItem(LOCK_KEY)?"Face ID lock · On":"Face ID lock · Off";
+}
+$("lockToggle").onclick=async()=>{
+  if(localStorage.getItem(LOCK_KEY)){if(await verifyLock()){localStorage.removeItem(LOCK_KEY);toast("Face ID lock off")}else return toast("Not verified")}
+  else{try{await enableLock();toast("Face ID lock on")}catch(e){toast("Couldn’t set up Face ID")}}
+  updateLockButton();
+};
+$("lockRetry").onclick=tryUnlock;
+$("lockOff").onclick=()=>{if(confirm("Turn off the lock? This screen is a privacy lock only; your data stays on this phone.")){localStorage.removeItem(LOCK_KEY);setLocked(false);updateLockButton()}};
+updateLockButton();
+if(localStorage.getItem(LOCK_KEY)){setLocked(true);tryUnlock()}
+let hiddenAt=0;
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden){hiddenAt=Date.now();return}
+  if(localStorage.getItem(LOCK_KEY)&&hiddenAt&&Date.now()-hiddenAt>30000){setLocked(true);$("lockMsg").textContent="Locked";tryUnlock()}
+});
+
+/* ---------- v2.0.3: offline (service worker) ---------- */
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("sw.js").then(()=>navigator.serviceWorker.ready).then(()=>{
+    if(!localStorage.getItem("music-money-offline-ready")){localStorage.setItem("music-money-offline-ready","1");toast("Offline ready ✓")}
+  }).catch(e=>console.error("Music Money offline setup failed",e));
+}
+const vl=$("versionLine");if(vl)vl.textContent=`Music Money v${APP_VERSION}`;
