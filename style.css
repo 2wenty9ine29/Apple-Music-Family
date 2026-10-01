@@ -81,3 +81,11 @@ body{max-width:100%;overscroll-behavior-x:none}
 .quick-add-btn{border:1px solid #e2e2e5;background:#fff;border-radius:14px;padding:12px 6px;font-weight:600;font-size:15px}
 .quick-add-btn small{display:block;color:var(--muted);font-weight:500;margin-top:2px}
 .quick-add-btn:active{background:#f0f0f3}
+
+.momo-card{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px;padding:16px 18px;border:0;border-radius:20px;background:#1d1d1f;color:#fff;text-align:left;font:inherit}
+.momo-card:active{transform:scale(.985)}
+.momo-text{display:grid;gap:3px}
+.momo-label{font-size:11px;letter-spacing:.08em;color:rgba(255,255,255,.55);font-weight:600}
+.momo-text strong{font-size:22px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.momo-text span:last-child{font-size:14px;color:rgba(255,255,255,.75)}
+.momo-share{flex:none;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.16);font-size:13px;font-weight:600}

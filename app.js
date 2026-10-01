@@ -19,7 +19,7 @@ document.addEventListener("click",e=>{
   if(t.id==="landingReminder")return goView("reminders");
 });
 applyView(location.hash.slice(1));
-const APP_VERSION = "2.0.5";
+const APP_VERSION = "2.0.6";
 const KEY = "music-money-v1"; // Keep unchanged so v2.0 preserves all existing user data.
 const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const markerByMonth = {January:"🛁",February:"",March:"",April:"🛩️",May:"",June:"",July:"🎰",August:"🪽",September:"🐍",October:"🦉",November:"",December:""};
@@ -158,7 +158,7 @@ function reminderMessage(group){
   const {payer,people,months,total}=group;const monthText=formatMonthList(months);const lastLabels=[...new Set(people.map(m=>lastPaidLabel(m).replace(/ \d{4}$/,"")))];
   const lastText=lastLabels.length===1?lastLabels[0]:lastLabels.join(" and ");
   const extras="";
-  const polite=payer.reminderTone==="female",momo=` Send to MoMo ${MOMO_NUMBER} (${MOMO_NAME}).`;
+  const polite=payer.reminderTone==="female",momo="";
   if(polite)return `Hello ${niceName(payer.name)}, please the Apple Music is up. Last payment was for ${lastText}, so it’ll be ${money(total)} for ${monthText}${extras}.${momo}`;
   return `Gee, the Apple Music is up. Last payment was for ${lastText}, so it’ll be ${money(total)} for ${monthText}${extras}.${momo}`;
 }
@@ -301,3 +301,10 @@ async function repairOffline(){
   toast("Reinstalling offline files…");setTimeout(()=>location.reload(),600);
 }
 {const vl=$("versionLine");if(vl){vl.style.cursor="pointer";vl.onclick=()=>{if(/NOT ready/.test(vl.textContent)){if(navigator.onLine)repairOffline();else toast("Connect to internet first")}else toast("Offline files are installed ✓")}}}
+
+$("momoCard").onclick=async()=>{
+  const text=`MoMo number: ${MOMO_NUMBER}\nName: ${MOMO_NAME}`;
+  try{if(navigator.share){await navigator.share({text});return}}catch(e){if(e&&e.name==="AbortError")return}
+  try{await navigator.clipboard.writeText(text);toast("MoMo details copied")}catch(e){toast(text)}
+};
+{const n=$("momoNumber"),p=$("momoName");if(n)n.textContent=MOMO_NUMBER.replace(/(\d{3})(\d{3})(\d{4})/,"$1 $2 $3");if(p)p.textContent=MOMO_NAME}

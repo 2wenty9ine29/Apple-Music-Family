@@ -13,3 +13,5 @@ Data key `music-money-v1` unchanged.
 Billing month: from the 25th the app shows next month.
 
 Offline on iPhone: the Home Screen app keeps its OWN storage, so open the Home Screen icon (not Safari) once with internet. Settings shows 'Offline ready ✓'; if it says NOT ready, tap that line while online.
+
+MoMo details are no longer in reminders; tap the MoMo card at the top of Payments to share them.
