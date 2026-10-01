@@ -9,13 +9,11 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <link rel="apple-touch-icon" href="icon-180.png" />
   <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
-  <link rel="manifest" href="manifest.webmanifest?v=203" />
+  <link rel="manifest" href="manifest.webmanifest?v=205" />
   <title>Music Money</title>
-  <script>try{if(localStorage.getItem("music-money-lock"))document.documentElement.classList.add("is-locked")}catch(e){}</script>
-  <link rel="stylesheet" href="style.css?v=203" />
+  <link rel="stylesheet" href="style.css?v=205" />
 </head>
 <body class="splash-open">
-  <div id="lockScreen" aria-live="polite"><div class="lock-card"><div class="lock-icon">🔒</div><h2>Music Money</h2><p id="lockMsg">Locked</p><button id="lockRetry" type="button" class="save-button">Unlock with Face ID</button><button id="lockOff" type="button" class="lock-off" hidden>Turn off lock</button></div></div>
   <section class="landing" id="splash" aria-label="Music Money">
     <header class="landing-nav">
       <button class="wordmark" id="homeBrand" type="button">Music Money</button>
@@ -201,8 +199,6 @@
     <button class="save-button secondary" id="exportData">Export backup</button>
     <button class="save-button secondary" id="importData">Import backup</button>
     <p class="sub backup-line" id="backupLine"></p>
-    <div class="eyebrow history-label">SECURITY</div>
-    <button class="save-button secondary" id="lockToggle" type="button">Face ID lock</button>
     <p class="sub backup-line" id="versionLine"></p>
     <input type="file" id="importFile" accept="application/json,.json" hidden />
   </section>
@@ -220,7 +216,7 @@
   </section>
 
   <div class="toast" id="toast"></div>
-  <script src="app.js?v=203"></script>
+  <script src="app.js?v=205"></script>
 
 </body>
 </html>

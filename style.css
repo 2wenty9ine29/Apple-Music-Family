@@ -76,9 +76,8 @@ body{max-width:100%;overscroll-behavior-x:none}
 .toast.has-action::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:100%;background:rgba(255,255,255,.55);transform-origin:left;transform:scaleX(1)}
 .toast.has-action.run::after{animation:toastBar var(--toast-ms,2000ms) linear forwards}
 @keyframes toastBar{to{transform:scaleX(0)}}
-#lockScreen{display:none;position:fixed;inset:0;z-index:100;background:#fff;align-items:center;justify-content:center;padding:24px}
-.is-locked #lockScreen{display:flex}
-.lock-card{text-align:center;display:grid;gap:14px;width:min(320px,100%)}
-.lock-icon{font-size:44px}.lock-card h2{margin:0;font-size:26px;letter-spacing:-.04em}.lock-card p{margin:0;color:var(--muted)}
-.lock-off{border:0;background:none;color:var(--muted);font-size:13px}
-.backup-line{margin:10px 0 0;text-align:center}
+
+.quick-add{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.quick-add-btn{border:1px solid #e2e2e5;background:#fff;border-radius:14px;padding:12px 6px;font-weight:600;font-size:15px}
+.quick-add-btn small{display:block;color:var(--muted);font-weight:500;margin-top:2px}
+.quick-add-btn:active{background:#f0f0f3}

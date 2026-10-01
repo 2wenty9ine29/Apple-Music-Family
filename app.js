@@ -19,7 +19,7 @@ document.addEventListener("click",e=>{
   if(t.id==="landingReminder")return goView("reminders");
 });
 applyView(location.hash.slice(1));
-const APP_VERSION = "2.0.3";
+const APP_VERSION = "2.0.5";
 const KEY = "music-money-v1"; // Keep unchanged so v2.0 preserves all existing user data.
 const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const markerByMonth = {January:"🛁",February:"",March:"",April:"🛩️",May:"",June:"",July:"🎰",August:"🪽",September:"🐍",October:"🦉",November:"",December:""};
@@ -45,7 +45,9 @@ const money=n=>`GH₵${Number(n||0).toLocaleString("en-GH",{minimumFractionDigit
 const monthKey=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
 const uid=p=>`${p}-${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
 const monthIndex=(year,month0)=>Number(year)*12+Number(month0);
-const _now=new Date();const todayMonth=()=>new Date(_now.getFullYear(),_now.getMonth(),1);let viewedMonth=todayMonth();
+const _now=new Date();const MOMO_NUMBER="0548548435",MOMO_NAME="Baaye Stephen"; /* shown in reminders */
+const BILLING_DAY=25; /* from the 25th, you collect NEXT month */
+const todayMonth=()=>new Date(_now.getFullYear(),_now.getMonth()+(_now.getDate()>=BILLING_DAY?1:0),1);let viewedMonth=todayMonth();
 const PHONES={m1:"0257677310",m2:"0247065885",m3:"",m4:"0554447427",m5:"0247554798",m6:"0509045690",m7:"0205987053",m8:"0205987053",m9:"0509691179",m10:"0506607231",m11:"0505408461",m12:"0553691093"};
 const waNumber=p=>{let d=String(p||"").replace(/\D/g,"");if(d.startsWith("0"))d="233"+d.slice(1);return d};
 
@@ -156,9 +158,9 @@ function reminderMessage(group){
   const {payer,people,months,total}=group;const monthText=formatMonthList(months);const lastLabels=[...new Set(people.map(m=>lastPaidLabel(m).replace(/ \d{4}$/,"")))];
   const lastText=lastLabels.length===1?lastLabels[0]:lastLabels.join(" and ");
   const extras="";
-  const polite=payer.reminderTone==="female";
-  if(polite)return `Hello ${niceName(payer.name)}, please the Apple Music is up. Last payment was for ${lastText}, so it’ll be ${money(total)} for ${monthText}${extras}.`;
-  return `Gee, the Apple Music is up. Last payment was for ${lastText}, so it’ll be ${money(total)} for ${monthText}${extras}.`;
+  const polite=payer.reminderTone==="female",momo=` Send to MoMo ${MOMO_NUMBER} (${MOMO_NAME}).`;
+  if(polite)return `Hello ${niceName(payer.name)}, please the Apple Music is up. Last payment was for ${lastText}, so it’ll be ${money(total)} for ${monthText}${extras}.${momo}`;
+  return `Gee, the Apple Music is up. Last payment was for ${lastText}, so it’ll be ${money(total)} for ${monthText}${extras}.${momo}`;
 }
 function renderReminders(mk){
   const groups=data.members.filter(m=>!m.paidBy).map(m=>reminderGroup(m,mk)).filter(Boolean);
@@ -187,7 +189,8 @@ function openMemberDetail(id){
   $("detailName").textContent=m.name;
   const mk=monthKey(viewedMonth),debt=totalDebtForMember(m,mk),paidCount=Math.max(1,Math.min(12,Number(m.monthsPaid||1))),paidYear=Number(m.markerYear||new Date().getFullYear());
   const years=[...new Set([paidYear-2,paidYear-1,paidYear,new Date().getFullYear(),new Date().getFullYear()+1,new Date().getFullYear()+2])].sort((a,b)=>a-b);
-  $("memberDetail").innerHTML=`<div class="detail-summary"><div class="detail-box"><span>${monthNames[viewedMonth.getMonth()]} debt</span><strong>${money(debt)}</strong></div><div class="detail-box"><span>Last paid</span><strong>${escapeHtml(lastPaidLabel(m))}</strong></div></div><div class="control-card"><div class="control-title"><div><b>Payment status</b><small>Set how many months were paid and the month the payment covered through.</small></div><strong id="coverageAmount">${money(paidCount*Number(m.monthlyPrice||15))}</strong></div><div class="coverage-label">MONTHS PAID</div><div class="month-picker" id="monthPicker">${Array.from({length:12},(_,i)=>`<button type="button" class="month-choice ${i+1===paidCount?"selected":""}" data-months="${i+1}">${i+1}<small>${i===0?"month":"months"}</small></button>`).join("")}</div><div class="coverage-label">LAST PAID THROUGH</div><div class="date-picker-row"><label class="detail-label">Month<select id="lastPaidMonth">${monthNames.map((n,i)=>`<option value="${i}" ${n===m.markerMonth?"selected":""}>${n}</option>`).join("")}</select></label><label class="detail-label">Year<select id="lastPaidYear">${years.map(y=>`<option value="${y}" ${y===paidYear?"selected":""}>${y}</option>`).join("")}</select></label></div><button class="save-button" id="saveCoverage">Save payment status</button></div><button class="save-button secondary" id="detailEditMember">Edit member details</button><div class="detail-actions"><button class="text-button" id="detailAddPayment">Advanced payment entry</button></div><div class="eyebrow history-label">PAYMENT HISTORY</div><div>${data.payments.filter(p=>p.memberId===m.id).sort((a,b)=>(b.date||"").localeCompare(a.date||"")).map(p=>`<div class="history-row"><div><strong>${escapeHtml(p.date||monthLabelFromKey(p.month))}</strong><small>${escapeHtml(monthLabelFromKey(p.month||mk))}${p.monthsPaid?` · ${p.monthsPaid} month${p.monthsPaid===1?"":"s"}`:""}</small></div><strong>${money(p.amount)}</strong></div>`).join("")||`<div class="empty">No payment records yet.</div>`}</div>`;
+  $("memberDetail").innerHTML=`<div class="detail-summary"><div class="detail-box"><span>${monthNames[viewedMonth.getMonth()]} debt</span><strong>${money(debt)}</strong></div><div class="detail-box"><span>Last paid</span><strong>${escapeHtml(lastPaidLabel(m))}</strong></div></div><div class="control-card"><div class="control-title"><div><b>Quick add</b><small>One tap records ${monthNames[viewedMonth.getMonth()]} as paid.</small></div></div><div class="quick-add">${[1,2,3].map(n=>`<button type="button" class="quick-add-btn" data-quickadd="${n}">${n} month${n>1?"s":""}<small>${money(n*Number(m.monthlyPrice||15))}</small></button>`).join("")}</div></div><div class="control-card"><div class="control-title"><div><b>Payment status</b><small>Set how many months were paid and the month the payment covered through.</small></div><strong id="coverageAmount">${money(paidCount*Number(m.monthlyPrice||15))}</strong></div><div class="coverage-label">MONTHS PAID</div><div class="month-picker" id="monthPicker">${Array.from({length:12},(_,i)=>`<button type="button" class="month-choice ${i+1===paidCount?"selected":""}" data-months="${i+1}">${i+1}<small>${i===0?"month":"months"}</small></button>`).join("")}</div><div class="coverage-label">LAST PAID THROUGH</div><div class="date-picker-row"><label class="detail-label">Month<select id="lastPaidMonth">${monthNames.map((n,i)=>`<option value="${i}" ${n===m.markerMonth?"selected":""}>${n}</option>`).join("")}</select></label><label class="detail-label">Year<select id="lastPaidYear">${years.map(y=>`<option value="${y}" ${y===paidYear?"selected":""}>${y}</option>`).join("")}</select></label></div><button class="save-button" id="saveCoverage">Save payment status</button></div><button class="save-button secondary" id="detailEditMember">Edit member details</button><div class="detail-actions"><button class="text-button" id="detailAddPayment">Advanced payment entry</button></div><div class="eyebrow history-label">PAYMENT HISTORY</div><div>${data.payments.filter(p=>p.memberId===m.id).sort((a,b)=>(b.date||"").localeCompare(a.date||"")).map(p=>`<div class="history-row"><div><strong>${escapeHtml(p.date||monthLabelFromKey(p.month))}</strong><small>${escapeHtml(monthLabelFromKey(p.month||mk))}${p.monthsPaid?` · ${p.monthsPaid} month${p.monthsPaid===1?"":"s"}`:""}</small></div><strong>${money(p.amount)}</strong></div>`).join("")||`<div class="empty">No payment records yet.</div>`}</div>`;
+  document.querySelectorAll("[data-quickadd]").forEach(b=>b.onclick=()=>{const n=Number(b.dataset.quickadd),snap=JSON.stringify(data),amount=n*Number(m.monthlyPrice||15);data.payments.push({id:uid("pay"),memberId:m.id,amount,month:monthKey(viewedMonth),date:new Date().toISOString().slice(0,10),monthsPaid:n,note:"Quick add"});m.monthsPaid=n;saveData();closeSheets();render();toastAction(`${money(amount)} recorded for ${m.name}`,"Undo",()=>restoreSnap(snap),2000)});
   let selected=paidCount;
   const amountEl=$("coverageAmount");
   document.querySelectorAll(".month-choice").forEach(b=>b.onclick=()=>{selected=Number(b.dataset.months);document.querySelectorAll(".month-choice").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");amountEl.textContent=money(selected*Number(m.monthlyPrice||15))});
@@ -276,51 +279,25 @@ function updateBackupLine(){
   el.textContent=t?`Last backup: ${new Date(t).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})}`:"No backup yet";
 }
 updateBackupLine();
-setTimeout(()=>{const t=Number(localStorage.getItem(BACKUP_KEY)||0);if(!document.documentElement.classList.contains("is-locked")&&Date.now()-t>14*864e5)toastAction("Time to back up your data","Back up",exportBackup,6000)},3500);
+setTimeout(()=>{const t=Number(localStorage.getItem(BACKUP_KEY)||0);if(Date.now()-t>14*864e5)toastAction("Time to back up your data","Back up",exportBackup,6000)},3500);
 
-/* ---------- v2.0.3: Face ID lock (WebAuthn platform authenticator) ---------- */
-const LOCK_KEY="music-money-lock";
-const b64=buf=>btoa(String.fromCharCode(...new Uint8Array(buf)));
-const unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
-const rnd=n=>crypto.getRandomValues(new Uint8Array(n));
-const lockSupported=()=>!!(window.PublicKeyCredential&&navigator.credentials&&window.isSecureContext);
-async function enableLock(){
-  const cred=await navigator.credentials.create({publicKey:{challenge:rnd(32),rp:{name:"Music Money",id:location.hostname},user:{id:rnd(16),name:"owner",displayName:"Music Money"},pubKeyCredParams:[{type:"public-key",alg:-7},{type:"public-key",alg:-257}],authenticatorSelection:{authenticatorAttachment:"platform",userVerification:"required"},timeout:60000}});
-  localStorage.setItem(LOCK_KEY,b64(cred.rawId));
-}
-async function verifyLock(){
-  const id=localStorage.getItem(LOCK_KEY);if(!id)return true;
-  try{await navigator.credentials.get({publicKey:{challenge:rnd(32),rpId:location.hostname,allowCredentials:[{type:"public-key",id:unb64(id)}],userVerification:"required",timeout:60000}});return true}catch(e){return false}
-}
-function setLocked(on){document.documentElement.classList.toggle("is-locked",on)}
-async function tryUnlock(){
-  const ok=await verifyLock();
-  if(ok){setLocked(false);$("lockOff").hidden=true}else{$("lockMsg").textContent="Couldn’t verify. Try again.";$("lockOff").hidden=false}
-}
-function updateLockButton(){
-  const b=$("lockToggle");if(!b)return;
-  if(!lockSupported()){b.textContent="Face ID lock · Not supported here";b.disabled=true;return}
-  b.textContent=localStorage.getItem(LOCK_KEY)?"Face ID lock · On":"Face ID lock · Off";
-}
-$("lockToggle").onclick=async()=>{
-  if(localStorage.getItem(LOCK_KEY)){if(await verifyLock()){localStorage.removeItem(LOCK_KEY);toast("Face ID lock off")}else return toast("Not verified")}
-  else{try{await enableLock();toast("Face ID lock on")}catch(e){toast("Couldn’t set up Face ID")}}
-  updateLockButton();
-};
-$("lockRetry").onclick=tryUnlock;
-$("lockOff").onclick=()=>{if(confirm("Turn off the lock? This screen is a privacy lock only; your data stays on this phone.")){localStorage.removeItem(LOCK_KEY);setLocked(false);updateLockButton()}};
-updateLockButton();
-if(localStorage.getItem(LOCK_KEY)){setLocked(true);tryUnlock()}
-let hiddenAt=0;
-document.addEventListener("visibilitychange",()=>{
-  if(document.hidden){hiddenAt=Date.now();return}
-  if(localStorage.getItem(LOCK_KEY)&&hiddenAt&&Date.now()-hiddenAt>30000){setLocked(true);$("lockMsg").textContent="Locked";tryUnlock()}
-});
+try{localStorage.removeItem("music-money-lock")}catch(e){}
 
 /* ---------- v2.0.3: offline (service worker) ---------- */
+const SW_URL=new URL("sw.js",document.currentScript&&document.currentScript.src?document.currentScript.src:location.href).href;
 if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("sw.js").then(()=>navigator.serviceWorker.ready).then(()=>{
+  navigator.serviceWorker.register(SW_URL).then(()=>navigator.serviceWorker.ready).then(()=>{
     if(!localStorage.getItem("music-money-offline-ready")){localStorage.setItem("music-money-offline-ready","1");toast("Offline ready ✓")}
   }).catch(e=>console.error("Music Money offline setup failed",e));
 }
-const vl=$("versionLine");if(vl)vl.textContent=`Music Money v${APP_VERSION}`;
+async function offlineStatus(){
+  let ok=false;try{ok=!!(navigator.serviceWorker&&navigator.serviceWorker.controller)&&(await caches.keys()).length>0}catch(e){}
+  const vl=$("versionLine");if(vl)vl.textContent=`Music Money v${APP_VERSION} · ${ok?"Offline ready ✓":"Offline NOT ready · tap here (with internet)"}`;
+}
+offlineStatus();if("serviceWorker" in navigator)navigator.serviceWorker.ready.then(()=>setTimeout(offlineStatus,800));
+
+async function repairOffline(){
+  try{(await navigator.serviceWorker.getRegistrations()).forEach(r=>r.unregister());(await caches.keys()).forEach(k=>caches.delete(k))}catch(e){}
+  toast("Reinstalling offline files…");setTimeout(()=>location.reload(),600);
+}
+{const vl=$("versionLine");if(vl){vl.style.cursor="pointer";vl.onclick=()=>{if(/NOT ready/.test(vl.textContent)){if(navigator.onLine)repairOffline();else toast("Connect to internet first")}else toast("Offline files are installed ✓")}}}
